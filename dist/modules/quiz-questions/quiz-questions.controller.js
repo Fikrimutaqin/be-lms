@@ -1,0 +1,107 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.QuizQuestionsController = void 0;
+const common_1 = require("@nestjs/common");
+const swagger_1 = require("@nestjs/swagger");
+const quiz_questions_service_1 = require("./quiz-questions.service");
+const create_quiz_question_dto_1 = require("./dto/create-quiz-question.dto");
+const update_quiz_question_dto_1 = require("./dto/update-quiz-question.dto");
+const quiz_question_entity_1 = require("./entities/quiz-question.entity");
+let QuizQuestionsController = class QuizQuestionsController {
+    quizQuestionsService;
+    constructor(quizQuestionsService) {
+        this.quizQuestionsService = quizQuestionsService;
+    }
+    create(createQuizQuestionDto) {
+        return this.quizQuestionsService.create(createQuizQuestionDto);
+    }
+    findAll() {
+        return this.quizQuestionsService.findAll();
+    }
+    findByQuiz(quizId) {
+        return this.quizQuestionsService.findByQuiz(quizId);
+    }
+    findOne(id) {
+        return this.quizQuestionsService.findOne(id);
+    }
+    update(id, updateQuizQuestionDto) {
+        return this.quizQuestionsService.update(id, updateQuizQuestionDto);
+    }
+    remove(id) {
+        return this.quizQuestionsService.remove(id);
+    }
+};
+exports.QuizQuestionsController = QuizQuestionsController;
+__decorate([
+    (0, common_1.Post)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Create a new quiz question' }),
+    (0, swagger_1.ApiResponse)({ status: 201, type: quiz_question_entity_1.QuizQuestion }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_quiz_question_dto_1.CreateQuizQuestionDto]),
+    __metadata("design:returntype", void 0)
+], QuizQuestionsController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all quiz questions' }),
+    (0, swagger_1.ApiResponse)({ status: 200, type: [quiz_question_entity_1.QuizQuestion] }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], QuizQuestionsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('quiz/:quizId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all questions for a specific quiz' }),
+    (0, swagger_1.ApiResponse)({ status: 200, type: [quiz_question_entity_1.QuizQuestion] }),
+    __param(0, (0, common_1.Param)('quizId', common_1.ParseUUIDPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], QuizQuestionsController.prototype, "findByQuiz", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get a quiz question by id' }),
+    (0, swagger_1.ApiResponse)({ status: 200, type: quiz_question_entity_1.QuizQuestion }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'Question not found.' }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], QuizQuestionsController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Patch)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update a quiz question' }),
+    (0, swagger_1.ApiResponse)({ status: 200, type: quiz_question_entity_1.QuizQuestion }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_quiz_question_dto_1.UpdateQuizQuestionDto]),
+    __metadata("design:returntype", void 0)
+], QuizQuestionsController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete a quiz question' }),
+    (0, swagger_1.ApiResponse)({ status: 204, description: 'Question successfully deleted.' }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], QuizQuestionsController.prototype, "remove", null);
+exports.QuizQuestionsController = QuizQuestionsController = __decorate([
+    (0, swagger_1.ApiTags)('Quiz Questions'),
+    (0, common_1.Controller)('quiz-questions'),
+    __metadata("design:paramtypes", [quiz_questions_service_1.QuizQuestionsService])
+], QuizQuestionsController);
+//# sourceMappingURL=quiz-questions.controller.js.map

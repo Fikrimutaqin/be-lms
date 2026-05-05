@@ -15,6 +15,24 @@ const app_service_1 = require("./app.service");
 const users_module_1 = require("./modules/users/users.module");
 const auth_module_1 = require("./modules/auth/auth.module");
 const uploads_module_1 = require("./modules/uploads/uploads.module");
+const courses_module_1 = require("./modules/courses/courses.module");
+const categories_module_1 = require("./modules/categories/categories.module");
+const enrollments_module_1 = require("./modules/enrollments/enrollments.module");
+const course_modules_module_1 = require("./modules/course-modules/course-modules.module");
+const lessons_module_1 = require("./modules/lessons/lessons.module");
+const resources_module_1 = require("./modules/resources/resources.module");
+const assignments_module_1 = require("./modules/assignments/assignments.module");
+const submissions_module_1 = require("./modules/submissions/submissions.module");
+const quizzes_module_1 = require("./modules/quizzes/quizzes.module");
+const quiz_questions_module_1 = require("./modules/quiz-questions/quiz-questions.module");
+const quiz_answers_module_1 = require("./modules/quiz-answers/quiz-answers.module");
+const grades_module_1 = require("./modules/grades/grades.module");
+const discussion_forums_module_1 = require("./modules/discussion-forums/discussion-forums.module");
+const discussion_posts_module_1 = require("./modules/discussion-posts/discussion-posts.module");
+const comments_module_1 = require("./modules/comments/comments.module");
+const certificates_module_1 = require("./modules/certificates/certificates.module");
+const notifications_module_1 = require("./modules/notifications/notifications.module");
+const activity_logs_module_1 = require("./modules/activity-logs/activity-logs.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -42,6 +60,24 @@ exports.AppModule = AppModule = __decorate([
             users_module_1.UsersModule,
             auth_module_1.AuthModule,
             uploads_module_1.UploadsModule,
+            courses_module_1.CoursesModule,
+            categories_module_1.CategoriesModule,
+            enrollments_module_1.EnrollmentsModule,
+            course_modules_module_1.CourseModulesModule,
+            lessons_module_1.LessonsModule,
+            resources_module_1.ResourcesModule,
+            assignments_module_1.AssignmentsModule,
+            submissions_module_1.SubmissionsModule,
+            quizzes_module_1.QuizzesModule,
+            quiz_questions_module_1.QuizQuestionsModule,
+            quiz_answers_module_1.QuizAnswersModule,
+            grades_module_1.GradesModule,
+            discussion_forums_module_1.DiscussionForumsModule,
+            discussion_posts_module_1.DiscussionPostsModule,
+            comments_module_1.CommentsModule,
+            certificates_module_1.CertificatesModule,
+            notifications_module_1.NotificationsModule,
+            activity_logs_module_1.ActivityLogsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

@@ -1,0 +1,16 @@
+import { Repository } from 'typeorm';
+import { Comment } from './entities/comment.entity';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { UpdateCommentDto } from './dto/update-comment.dto';
+import { DiscussionPost } from '../discussion-posts/entities/discussion-post.entity';
+export declare class CommentsService {
+    private readonly commentRepository;
+    private readonly postRepository;
+    constructor(commentRepository: Repository<Comment>, postRepository: Repository<DiscussionPost>);
+    create(createCommentDto: CreateCommentDto): Promise<Comment>;
+    findAll(): Promise<Comment[]>;
+    findByPost(postId: string): Promise<Comment[]>;
+    findOne(id: string): Promise<Comment>;
+    update(id: string, updateCommentDto: UpdateCommentDto): Promise<Comment>;
+    remove(id: string): Promise<void>;
+}

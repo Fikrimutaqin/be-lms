@@ -6,6 +6,24 @@ import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
+import { CoursesModule } from './modules/courses/courses.module';
+import { CategoriesModule } from './modules/categories/categories.module';
+import { EnrollmentsModule } from './modules/enrollments/enrollments.module';
+import { CourseModulesModule } from './modules/course-modules/course-modules.module';
+import { LessonsModule } from './modules/lessons/lessons.module';
+import { ResourcesModule } from './modules/resources/resources.module';
+import { AssignmentsModule } from './modules/assignments/assignments.module';
+import { SubmissionsModule } from './modules/submissions/submissions.module';
+import { QuizzesModule } from './modules/quizzes/quizzes.module';
+import { QuizQuestionsModule } from './modules/quiz-questions/quiz-questions.module';
+import { QuizAnswersModule } from './modules/quiz-answers/quiz-answers.module';
+import { GradesModule } from './modules/grades/grades.module';
+import { DiscussionForumsModule } from './modules/discussion-forums/discussion-forums.module';
+import { DiscussionPostsModule } from './modules/discussion-posts/discussion-posts.module';
+import { CommentsModule } from './modules/comments/comments.module';
+import { CertificatesModule } from './modules/certificates/certificates.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { ActivityLogsModule } from './modules/activity-logs/activity-logs.module';
 
 @Module({
   imports: [
@@ -30,6 +48,24 @@ import { UploadsModule } from './modules/uploads/uploads.module';
     UsersModule,
     AuthModule,
     UploadsModule,
+    CoursesModule,
+    CategoriesModule,
+    EnrollmentsModule,
+    CourseModulesModule,
+    LessonsModule,
+    ResourcesModule,
+    AssignmentsModule,
+    SubmissionsModule,
+    QuizzesModule,
+    QuizQuestionsModule,
+    QuizAnswersModule,
+    GradesModule,
+    DiscussionForumsModule,
+    DiscussionPostsModule,
+    CommentsModule,
+    CertificatesModule,
+    NotificationsModule,
+    ActivityLogsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

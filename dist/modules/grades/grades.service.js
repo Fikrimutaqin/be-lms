@@ -1,0 +1,70 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GradesService = void 0;
+const common_1 = require("@nestjs/common");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const grade_entity_1 = require("./entities/grade.entity");
+let GradesService = class GradesService {
+    gradeRepository;
+    constructor(gradeRepository) {
+        this.gradeRepository = gradeRepository;
+    }
+    async create(createGradeDto) {
+        if (!createGradeDto.submissionId && !createGradeDto.quizAnswerId) {
+            throw new common_1.BadRequestException('Either submissionId or quizAnswerId must be provided');
+        }
+        const grade = this.gradeRepository.create(createGradeDto);
+        return await this.gradeRepository.save(grade);
+    }
+    async findAll() {
+        return await this.gradeRepository.find({
+            relations: ['user', 'submission', 'quizAnswer'],
+        });
+    }
+    async findByUser(userId) {
+        return await this.gradeRepository.find({
+            where: { userId },
+            relations: ['submission', 'quizAnswer', 'submission.assignment', 'quizAnswer.quizQuestion'],
+            order: { gradedAt: 'DESC' },
+        });
+    }
+    async findOne(id) {
+        const grade = await this.gradeRepository.findOne({
+            where: { id },
+            relations: ['user', 'submission', 'quizAnswer'],
+        });
+        if (!grade) {
+            throw new common_1.NotFoundException(`Grade with ID "${id}" not found`);
+        }
+        return grade;
+    }
+    async update(id, updateGradeDto) {
+        const grade = await this.findOne(id);
+        const updatedGrade = this.gradeRepository.merge(grade, updateGradeDto);
+        return await this.gradeRepository.save(updatedGrade);
+    }
+    async remove(id) {
+        const grade = await this.findOne(id);
+        await this.gradeRepository.remove(grade);
+    }
+};
+exports.GradesService = GradesService;
+exports.GradesService = GradesService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, typeorm_1.InjectRepository)(grade_entity_1.Grade)),
+    __metadata("design:paramtypes", [typeorm_2.Repository])
+], GradesService);
+//# sourceMappingURL=grades.service.js.map
