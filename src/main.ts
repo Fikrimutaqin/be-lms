@@ -17,6 +17,7 @@ async function createApp() {
   });
 
   nestApp.enableCors();
+  nestApp.setGlobalPrefix('api/v1');
 
   const config = new DocumentBuilder()
     .setTitle('NexLearn LMS API')
