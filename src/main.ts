@@ -16,7 +16,6 @@ async function bootstrap() {
   });
 
   app.enableCors();
-  app.setGlobalPrefix('api');
 
   const config = new DocumentBuilder()
     .setTitle('NexLearn LMS API')
@@ -50,7 +49,7 @@ async function bootstrap() {
   }));
 
   const port = process.env.PORT ?? 3000;
-  
+
   // Hanya listen jika tidak berjalan di Vercel (Production)
   if (process.env.NODE_ENV !== 'production') {
     await app.listen(port);
