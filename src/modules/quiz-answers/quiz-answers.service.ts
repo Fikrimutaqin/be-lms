@@ -12,35 +12,47 @@ export class QuizAnswersService {
     private readonly answerRepository: Repository<QuizAnswer>,
   ) { }
 
+  /**
+   * Membuat pilihan jawaban kuis baru.
+   */
   async create(createQuizAnswerDto: CreateQuizAnswerDto): Promise<QuizAnswer> {
     const answer = this.answerRepository.create(createQuizAnswerDto);
     return await this.answerRepository.save(answer);
   }
 
-  async findAll(): Promise<QuizAnswer[]> {
-    return await this.answerRepository.find({
-      relations: ['user', 'quizQuestion'],
-    });
-  }
-
-  async findByQuestion(quizQuestionId: string): Promise<QuizAnswer[]> {
-    return await this.answerRepository.find({
-      where: { quizQuestionId },
-      relations: ['user'],
-    });
-  }
-
-  async findByUser(userId: string): Promise<QuizAnswer[]> {
-    return await this.answerRepository.find({
-      where: { userId },
+  /**
+   * Mengambil semua daftar jawaban.
+   */
+  async findAll() {
+    const answers = await this.answerRepository.find({
       relations: ['quizQuestion'],
     });
+    return {
+      message: 'All quiz answers retrieved successfully',
+      data: answers
+    };
   }
 
+  /**
+   * Mengambil semua pilihan jawaban untuk satu pertanyaan kuis tertentu.
+   */
+  async findByQuestion(quizQuestionId: string) {
+    const answers = await this.answerRepository.find({
+      where: { quizQuestionId },
+    });
+    return {
+      message: 'Answers for the question retrieved successfully',
+      data: answers
+    };
+  }
+
+  /**
+   * Mencari detail satu jawaban.
+   */
   async findOne(id: string): Promise<QuizAnswer> {
     const answer = await this.answerRepository.findOne({
       where: { id },
-      relations: ['user', 'quizQuestion'],
+      relations: ['quizQuestion'],
     });
 
     if (!answer) {
@@ -50,12 +62,18 @@ export class QuizAnswersService {
     return answer;
   }
 
+  /**
+   * Memperbarui jawaban.
+   */
   async update(id: string, updateQuizAnswerDto: UpdateQuizAnswerDto): Promise<QuizAnswer> {
     const answer = await this.findOne(id);
     const updatedAnswer = this.answerRepository.merge(answer, updateQuizAnswerDto);
     return await this.answerRepository.save(updatedAnswer);
   }
 
+  /**
+   * Menghapus jawaban.
+   */
   async remove(id: string): Promise<void> {
     const answer = await this.findOne(id);
     await this.answerRepository.remove(answer);

@@ -27,15 +27,23 @@ let AssignmentsService = class AssignmentsService {
         return await this.assignmentRepository.save(assignment);
     }
     async findAll() {
-        return await this.assignmentRepository.find({
+        const assignments = await this.assignmentRepository.find({
             relations: ['course'],
         });
+        return {
+            message: 'All assignments retrieved successfully',
+            data: assignments
+        };
     }
     async findByCourse(courseId) {
-        return await this.assignmentRepository.find({
+        const assignments = await this.assignmentRepository.find({
             where: { courseId },
             order: { createdAt: 'DESC' },
         });
+        return {
+            message: 'Assignments for the course retrieved successfully',
+            data: assignments
+        };
     }
     async findOne(id) {
         const assignment = await this.assignmentRepository.findOne({

@@ -19,6 +19,8 @@ const resources_service_1 = require("./resources.service");
 const create_resource_dto_1 = require("./dto/create-resource.dto");
 const update_resource_dto_1 = require("./dto/update-resource.dto");
 const resource_entity_1 = require("./entities/resource.entity");
+const roles_decorator_1 = require("../../common/decorators/roles.decorator");
+const user_entity_1 = require("../users/entities/user.entity");
 let ResourcesController = class ResourcesController {
     resourcesService;
     constructor(resourcesService) {
@@ -46,6 +48,7 @@ let ResourcesController = class ResourcesController {
 exports.ResourcesController = ResourcesController;
 __decorate([
     (0, common_1.Post)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new resource' }),
     (0, swagger_1.ApiResponse)({ status: 201, type: resource_entity_1.Resource }),
     __param(0, (0, common_1.Body)()),
@@ -55,6 +58,7 @@ __decorate([
 ], ResourcesController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Get all resources' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: [resource_entity_1.Resource] }),
     __metadata("design:type", Function),
@@ -74,7 +78,6 @@ __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Get a resource by id' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: resource_entity_1.Resource }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Resource not found.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -82,6 +85,7 @@ __decorate([
 ], ResourcesController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Update a resource' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: resource_entity_1.Resource }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
@@ -92,6 +96,7 @@ __decorate([
 ], ResourcesController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Delete a resource' }),
     (0, swagger_1.ApiResponse)({ status: 204, description: 'Resource successfully deleted.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
@@ -101,6 +106,7 @@ __decorate([
 ], ResourcesController.prototype, "remove", null);
 exports.ResourcesController = ResourcesController = __decorate([
     (0, swagger_1.ApiTags)('Resources'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('resources'),
     __metadata("design:paramtypes", [resources_service_1.ResourcesService])
 ], ResourcesController);

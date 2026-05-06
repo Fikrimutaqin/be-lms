@@ -19,16 +19,17 @@ const discussion_posts_service_1 = require("./discussion-posts.service");
 const create_discussion_post_dto_1 = require("./dto/create-discussion-post.dto");
 const update_discussion_post_dto_1 = require("./dto/update-discussion-post.dto");
 const discussion_post_entity_1 = require("./entities/discussion-post.entity");
+const pagination_query_dto_1 = require("../../common/dto/pagination-query.dto");
 let DiscussionPostsController = class DiscussionPostsController {
     discussionPostsService;
     constructor(discussionPostsService) {
         this.discussionPostsService = discussionPostsService;
     }
-    create(createDiscussionPostDto) {
-        return this.discussionPostsService.create(createDiscussionPostDto);
+    create(createDiscussionPostDto, req) {
+        return this.discussionPostsService.create(createDiscussionPostDto, req.user);
     }
-    findAll() {
-        return this.discussionPostsService.findAll();
+    findAll(query) {
+        return this.discussionPostsService.findAll(query);
     }
     findByForum(forumId) {
         return this.discussionPostsService.findByForum(forumId);
@@ -39,11 +40,11 @@ let DiscussionPostsController = class DiscussionPostsController {
     findOne(id) {
         return this.discussionPostsService.findOne(id);
     }
-    update(id, updateDiscussionPostDto) {
-        return this.discussionPostsService.update(id, updateDiscussionPostDto);
+    update(id, updateDiscussionPostDto, req) {
+        return this.discussionPostsService.update(id, updateDiscussionPostDto, req.user);
     }
-    remove(id) {
-        return this.discussionPostsService.remove(id);
+    remove(id, req) {
+        return this.discussionPostsService.remove(id, req.user);
     }
 };
 exports.DiscussionPostsController = DiscussionPostsController;
@@ -52,16 +53,18 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Create a new discussion post' }),
     (0, swagger_1.ApiResponse)({ status: 201, type: discussion_post_entity_1.DiscussionPost }),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_discussion_post_dto_1.CreateDiscussionPostDto]),
+    __metadata("design:paramtypes", [create_discussion_post_dto_1.CreateDiscussionPostDto, Object]),
     __metadata("design:returntype", void 0)
 ], DiscussionPostsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
     (0, swagger_1.ApiOperation)({ summary: 'Get all discussion posts' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: [discussion_post_entity_1.DiscussionPost] }),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [pagination_query_dto_1.PaginationQueryDto]),
     __metadata("design:returntype", void 0)
 ], DiscussionPostsController.prototype, "findAll", null);
 __decorate([
@@ -86,7 +89,6 @@ __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Get a discussion post by id' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: discussion_post_entity_1.DiscussionPost }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Post not found.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -98,8 +100,9 @@ __decorate([
     (0, swagger_1.ApiResponse)({ status: 200, type: discussion_post_entity_1.DiscussionPost }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_discussion_post_dto_1.UpdateDiscussionPostDto]),
+    __metadata("design:paramtypes", [String, update_discussion_post_dto_1.UpdateDiscussionPostDto, Object]),
     __metadata("design:returntype", void 0)
 ], DiscussionPostsController.prototype, "update", null);
 __decorate([
@@ -107,12 +110,14 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Delete a discussion post' }),
     (0, swagger_1.ApiResponse)({ status: 204, description: 'Post successfully deleted.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], DiscussionPostsController.prototype, "remove", null);
 exports.DiscussionPostsController = DiscussionPostsController = __decorate([
     (0, swagger_1.ApiTags)('Discussion Posts'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('discussion-posts'),
     __metadata("design:paramtypes", [discussion_posts_service_1.DiscussionPostsService])
 ], DiscussionPostsController);

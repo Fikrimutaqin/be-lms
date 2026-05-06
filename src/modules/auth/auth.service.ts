@@ -12,6 +12,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) { }
 
+  /**
+   * Logika pendaftaran user.
+   * Melakukan pengecekan email ganda sebelum menyimpan ke database.
+   */
   async register(registerDto: RegisterDto) {
     const existingUser = await this.usersService.findByEmail(registerDto.email);
     if (existingUser) {
@@ -20,11 +24,19 @@ export class AuthService {
 
     const user = await this.usersService.create(registerDto);
 
-    // Remove password from response
+    // Hilangkan password dari hasil return agar tidak bocor ke client
     const { password, ...result } = user as User;
-    return result;
+    return {
+      message: 'User registered successfully',
+      data: result
+    };
   }
 
+  /**
+   * Logika Login.
+   * Memvalidasi email dan password (menggunakan bcrypt untuk perbandingan hash).
+   * Mengembalikan token JWT yang berisi info ID, Email, dan Role.
+   */
   async login(loginDto: LoginDto) {
     const user = await this.usersService.findByEmail(loginDto.email);
 
@@ -32,6 +44,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    // Bandingkan password yang dikirim dengan hash di DB
     const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
 
     if (!isPasswordValid) {
@@ -41,13 +54,16 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email, role: user.role };
 
     return {
-      access_token: await this.jwtService.signAsync(payload),
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
+      message: 'Login successful',
+      data: {
+        access_token: await this.jwtService.signAsync(payload),
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+        }
       }
     };
   }

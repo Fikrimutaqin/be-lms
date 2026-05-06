@@ -6,8 +6,14 @@ export declare class CertificatesController {
     private readonly certificatesService;
     constructor(certificatesService: CertificatesService);
     create(createCertificateDto: CreateCertificateDto): Promise<Certificate>;
-    findAll(): Promise<Certificate[]>;
-    findByUser(userId: string): Promise<Certificate[]>;
+    findAll(): Promise<{
+        message: string;
+        data: Certificate[];
+    }>;
+    findByUser(userId: string): Promise<{
+        message: string;
+        data: Certificate[];
+    }>;
     findOne(id: string): Promise<Certificate>;
     update(id: string, updateCertificateDto: UpdateCertificateDto): Promise<Certificate>;
     remove(id: string): Promise<void>;

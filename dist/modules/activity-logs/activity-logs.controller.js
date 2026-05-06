@@ -18,6 +18,9 @@ const swagger_1 = require("@nestjs/swagger");
 const activity_logs_service_1 = require("./activity-logs.service");
 const create_activity_log_dto_1 = require("./dto/create-activity-log.dto");
 const activity_log_entity_1 = require("./entities/activity-log.entity");
+const roles_decorator_1 = require("../../common/decorators/roles.decorator");
+const user_entity_1 = require("../users/entities/user.entity");
+const pagination_query_dto_1 = require("../../common/dto/pagination-query.dto");
 let ActivityLogsController = class ActivityLogsController {
     activityLogsService;
     constructor(activityLogsService) {
@@ -26,8 +29,8 @@ let ActivityLogsController = class ActivityLogsController {
     create(createActivityLogDto) {
         return this.activityLogsService.create(createActivityLogDto);
     }
-    findAll() {
-        return this.activityLogsService.findAll();
+    findAll(query) {
+        return this.activityLogsService.findAll(query);
     }
     findByUser(userId) {
         return this.activityLogsService.findByUser(userId);
@@ -42,6 +45,7 @@ let ActivityLogsController = class ActivityLogsController {
 exports.ActivityLogsController = ActivityLogsController;
 __decorate([
     (0, common_1.Post)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new activity log' }),
     (0, swagger_1.ApiResponse)({ status: 201, type: activity_log_entity_1.ActivityLog }),
     __param(0, (0, common_1.Body)()),
@@ -51,14 +55,17 @@ __decorate([
 ], ActivityLogsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Get all activity logs' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: [activity_log_entity_1.ActivityLog] }),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [pagination_query_dto_1.PaginationQueryDto]),
     __metadata("design:returntype", void 0)
 ], ActivityLogsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('user/:userId'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Get activity logs for a specific user' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: [activity_log_entity_1.ActivityLog] }),
     __param(0, (0, common_1.Param)('userId', common_1.ParseUUIDPipe)),
@@ -68,9 +75,9 @@ __decorate([
 ], ActivityLogsController.prototype, "findByUser", null);
 __decorate([
     (0, common_1.Get)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Get an activity log by id' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: activity_log_entity_1.ActivityLog }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Log not found.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -78,6 +85,7 @@ __decorate([
 ], ActivityLogsController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Delete an activity log' }),
     (0, swagger_1.ApiResponse)({ status: 204, description: 'Log successfully deleted.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
@@ -87,6 +95,7 @@ __decorate([
 ], ActivityLogsController.prototype, "remove", null);
 exports.ActivityLogsController = ActivityLogsController = __decorate([
     (0, swagger_1.ApiTags)('Activity Logs'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('activity-logs'),
     __metadata("design:paramtypes", [activity_logs_service_1.ActivityLogsService])
 ], ActivityLogsController);

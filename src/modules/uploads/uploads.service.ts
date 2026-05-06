@@ -7,21 +7,30 @@ export class UploadsService {
   private readonly uploadPath = './uploads/images';
 
   constructor() {
-    // Pastikan folder upload ada saat service diinisialisasi
+    // Jalankan pengecekan folder saat aplikasi dijalankan
     this.ensureUploadPathExists();
   }
 
+  /**
+   * Memastikan folder tujuan upload sudah ada di server.
+   * Jika belum ada, maka akan dibuatkan secara otomatis.
+   */
   private ensureUploadPathExists() {
     if (!existsSync(this.uploadPath)) {
       mkdirSync(this.uploadPath, { recursive: true });
     }
   }
 
+  /**
+   * Mengonversi nama file menjadi URL publik.
+   */
   formatFileUrl(filename: string): string {
-    // Mengembalikan path yang bisa diakses via static assets
     return `/uploads/images/${filename}`;
   }
 
+  /**
+   * Menghapus file fisik dari sistem penyimpanan server.
+   */
   async deleteFile(filename: string) {
     const filePath = join(process.cwd(), 'uploads/images', filename);
     try {

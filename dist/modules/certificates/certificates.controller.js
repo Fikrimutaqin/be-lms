@@ -19,6 +19,8 @@ const certificates_service_1 = require("./certificates.service");
 const create_certificate_dto_1 = require("./dto/create-certificate.dto");
 const update_certificate_dto_1 = require("./dto/update-certificate.dto");
 const certificate_entity_1 = require("./entities/certificate.entity");
+const roles_decorator_1 = require("../../common/decorators/roles.decorator");
+const user_entity_1 = require("../users/entities/user.entity");
 let CertificatesController = class CertificatesController {
     certificatesService;
     constructor(certificatesService) {
@@ -46,9 +48,9 @@ let CertificatesController = class CertificatesController {
 exports.CertificatesController = CertificatesController;
 __decorate([
     (0, common_1.Post)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Issue a new certificate' }),
     (0, swagger_1.ApiResponse)({ status: 201, type: certificate_entity_1.Certificate }),
-    (0, swagger_1.ApiResponse)({ status: 409, description: 'Certificate already issued.' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_certificate_dto_1.CreateCertificateDto]),
@@ -56,6 +58,7 @@ __decorate([
 ], CertificatesController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Get all certificates' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: [certificate_entity_1.Certificate] }),
     __metadata("design:type", Function),
@@ -75,7 +78,6 @@ __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Get a certificate by id' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: certificate_entity_1.Certificate }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Certificate not found.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -83,6 +85,7 @@ __decorate([
 ], CertificatesController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Update a certificate' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: certificate_entity_1.Certificate }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
@@ -93,6 +96,7 @@ __decorate([
 ], CertificatesController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Delete a certificate' }),
     (0, swagger_1.ApiResponse)({ status: 204, description: 'Certificate successfully deleted.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
@@ -102,6 +106,7 @@ __decorate([
 ], CertificatesController.prototype, "remove", null);
 exports.CertificatesController = CertificatesController = __decorate([
     (0, swagger_1.ApiTags)('Certificates'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('certificates'),
     __metadata("design:paramtypes", [certificates_service_1.CertificatesService])
 ], CertificatesController);

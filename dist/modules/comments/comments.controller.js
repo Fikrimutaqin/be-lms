@@ -24,8 +24,8 @@ let CommentsController = class CommentsController {
     constructor(commentsService) {
         this.commentsService = commentsService;
     }
-    create(createCommentDto) {
-        return this.commentsService.create(createCommentDto);
+    create(createCommentDto, req) {
+        return this.commentsService.create(createCommentDto, req.user);
     }
     findAll() {
         return this.commentsService.findAll();
@@ -36,11 +36,11 @@ let CommentsController = class CommentsController {
     findOne(id) {
         return this.commentsService.findOne(id);
     }
-    update(id, updateCommentDto) {
-        return this.commentsService.update(id, updateCommentDto);
+    update(id, updateCommentDto, req) {
+        return this.commentsService.update(id, updateCommentDto, req.user);
     }
-    remove(id) {
-        return this.commentsService.remove(id);
+    remove(id, req) {
+        return this.commentsService.remove(id, req.user);
     }
 };
 exports.CommentsController = CommentsController;
@@ -49,8 +49,9 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Add a comment to a post' }),
     (0, swagger_1.ApiResponse)({ status: 201, type: comment_entity_1.Comment }),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_comment_dto_1.CreateCommentDto]),
+    __metadata("design:paramtypes", [create_comment_dto_1.CreateCommentDto, Object]),
     __metadata("design:returntype", void 0)
 ], CommentsController.prototype, "create", null);
 __decorate([
@@ -74,7 +75,6 @@ __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Get a comment by id' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: comment_entity_1.Comment }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Comment not found.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -86,8 +86,9 @@ __decorate([
     (0, swagger_1.ApiResponse)({ status: 200, type: comment_entity_1.Comment }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_comment_dto_1.UpdateCommentDto]),
+    __metadata("design:paramtypes", [String, update_comment_dto_1.UpdateCommentDto, Object]),
     __metadata("design:returntype", void 0)
 ], CommentsController.prototype, "update", null);
 __decorate([
@@ -95,12 +96,14 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Delete a comment' }),
     (0, swagger_1.ApiResponse)({ status: 204, description: 'Comment successfully deleted.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], CommentsController.prototype, "remove", null);
 exports.CommentsController = CommentsController = __decorate([
     (0, swagger_1.ApiTags)('Comments'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('comments'),
     __metadata("design:paramtypes", [comments_service_1.CommentsService])
 ], CommentsController);

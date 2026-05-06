@@ -27,21 +27,33 @@ let NotificationsService = class NotificationsService {
         return await this.notificationRepository.save(notification);
     }
     async findAll() {
-        return await this.notificationRepository.find({
+        const notifications = await this.notificationRepository.find({
             order: { createdAt: 'DESC' },
         });
+        return {
+            message: 'All notifications retrieved successfully',
+            data: notifications
+        };
     }
     async findByUser(userId) {
-        return await this.notificationRepository.find({
+        const notifications = await this.notificationRepository.find({
             where: { userId },
             order: { createdAt: 'DESC' },
         });
+        return {
+            message: 'User notifications retrieved successfully',
+            data: notifications
+        };
     }
     async findUnreadByUser(userId) {
-        return await this.notificationRepository.find({
+        const notifications = await this.notificationRepository.find({
             where: { userId, isRead: false },
             order: { createdAt: 'DESC' },
         });
+        return {
+            message: 'Unread notifications retrieved successfully',
+            data: notifications
+        };
     }
     async findOne(id) {
         const notification = await this.notificationRepository.findOne({
@@ -65,6 +77,9 @@ let NotificationsService = class NotificationsService {
     }
     async markAllAsRead(userId) {
         await this.notificationRepository.update({ userId, isRead: false }, { isRead: true, readAt: new Date() });
+        return {
+            message: 'All notifications marked as read'
+        };
     }
     async remove(id) {
         const notification = await this.findOne(id);

@@ -6,9 +6,14 @@ export declare class QuizAnswersService {
     private readonly answerRepository;
     constructor(answerRepository: Repository<QuizAnswer>);
     create(createQuizAnswerDto: CreateQuizAnswerDto): Promise<QuizAnswer>;
-    findAll(): Promise<QuizAnswer[]>;
-    findByQuestion(quizQuestionId: string): Promise<QuizAnswer[]>;
-    findByUser(userId: string): Promise<QuizAnswer[]>;
+    findAll(): Promise<{
+        message: string;
+        data: QuizAnswer[];
+    }>;
+    findByQuestion(quizQuestionId: string): Promise<{
+        message: string;
+        data: QuizAnswer[];
+    }>;
     findOne(id: string): Promise<QuizAnswer>;
     update(id: string, updateQuizAnswerDto: UpdateQuizAnswerDto): Promise<QuizAnswer>;
     remove(id: string): Promise<void>;

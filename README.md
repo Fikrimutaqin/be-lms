@@ -1,98 +1,97 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# NexLearn LMS - Backend API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+NexLearn adalah Learning Management System (LMS) modern yang dibangun dengan arsitektur yang skalabel, aman, dan modular menggunakan NestJS.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🏗️ Arsitektur Sistem
 
-## Description
+Project ini mengikuti pola **Layered Architecture** dan **Modular Design** dari NestJS:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+1.  **Common Layer**: Berisi global utilities seperti `Guards`, `Interceptors`, `Decorators`, dan `Interfaces`.
+2.  **Module Layer**: Setiap fitur (Users, Courses, Auth, dll) dipisahkan ke dalam module-nya sendiri yang bersifat independen.
+3.  **Data Layer**: Menggunakan TypeORM dengan PostgreSQL untuk manajemen database.
 
-## Project setup
+### Request Lifecycle
+Setiap request yang masuk melewati tahapan berikut:
+`Request` -> `Middleware` -> `Guards (Auth)` -> `Interceptors (Pre-mapping)` -> `Pipes (Validation)` -> `Controller` -> `Service` -> `Interceptor (Post-mapping)` -> `Response`
 
-```bash
-$ npm install
+## 🔐 Keamanan & Akses
+
+Aplikasi ini menggunakan sistem **Secure by Default**:
+-   **JWT Authentication**: Semua endpoint terkunci secara default.
+-   **Public Access**: Gunakan decorator `@Public()` untuk membuka akses endpoint (misal: Landing Page).
+-   **Role-Based Access Control (RBAC)**: Mendukung role `student`, `instructor`, dan `admin`.
+
+## 📊 Relasi Database (Entity Relationship)
+
+Berikut adalah visualisasi bagaimana setiap fitur saling terhubung:
+
+```mermaid
+erDiagram
+    USER ||--o{ COURSE : "teaches"
+    USER ||--o{ ENROLLMENT : "joins"
+    CATEGORY ||--o{ COURSE : "categorizes"
+    COURSE ||--o{ ENROLLMENT : "has students"
+    COURSE ||--o{ COURSE_MODULE : "contains"
+    COURSE_MODULE ||--o{ LESSON : "contains"
+    LESSON ||--o{ RESOURCE : "has"
+    COURSE ||--o{ QUIZ : "has"
+    QUIZ ||--o{ QUIZ_QUESTION : "contains"
+    QUIZ_QUESTION ||--o{ QUIZ_ANSWER : "has"
+    USER ||--o{ SUBMISSION : "submits"
+    ASSIGNMENT ||--o{ SUBMISSION : "receives"
+    SUBMISSION ||--o{ GRADE : "is graded"
+    COURSE ||--o{ DISCUSSION_FORUM : "has"
+    DISCUSSION_FORUM ||--o{ DISCUSSION_POST : "contains"
+    DISCUSSION_POST ||--o{ COMMENT : "receives"
 ```
 
-## Compile and run the project
+## 🚀 Fitur Utama
 
-```bash
-# development
-$ npm run start
+### 1. Authentication & Users
+-   Registrasi & Login dengan JWT.
+-   Manajemen profil user dan upload avatar.
+-   Sistem role untuk membatasi akses fitur instruktur vs siswa.
 
-# watch mode
-$ npm run start:dev
+### 2. Course Management
+-   Instruktur dapat membuat dan mengelola kursus.
+-   Struktur konten yang dalam: **Course > Module > Lesson**.
+-   Mendukung resource tambahan (PDF/Link) untuk setiap lesson.
 
-# production mode
-$ npm run start:prod
+### 3. Enrollment & Learning
+-   Siswa dapat mendaftar (enroll) ke kursus.
+-   Pelacakan progres belajar.
+-   Sistem Top Categories berdasarkan jumlah penjualan (enrollment).
+
+### 4. Evaluation (Quizzes & Assignments)
+-   Pembuatan kuis dengan pertanyaan pilihan ganda.
+-   Pengumpulan tugas (Assignments).
+-   Penilaian otomatis dan manual (Grades).
+
+### 5. Social & Engagement
+-   Forum diskusi untuk setiap kursus.
+-   Sistem komentar dan notifikasi real-time.
+-   Penerbitan sertifikat setelah kursus selesai.
+
+## 📡 Standar Response API
+
+Semua endpoint mengembalikan format JSON yang konsisten:
+
+```json
+{
+  "message": "Deskripsi aksi yang dilakukan",
+  "data": { ... },
+  "meta": {
+    "totalItems": 100,
+    "totalPages": 10,
+    "currentPage": 1
+  }
+}
 ```
 
-## Run tests
+## 🛠️ Cara Menjalankan
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+1.  Clone repository.
+2.  Install dependencies: `yarn install`.
+3.  Copy `.env.example` ke `.env` dan sesuaikan konfigurasi database.
+4.  Jalankan aplikasi: `yarn start:dev`.
+5.  Buka dokumentasi Swagger di: `http://localhost:3000/api/docs`.

@@ -4,8 +4,10 @@ export declare class UploadsController {
     constructor(uploadsService: UploadsService);
     uploadFile(file: Express.Multer.File): {
         message: string;
-        url: string;
-        filename: string;
+        data: {
+            url: string;
+            filename: string;
+        };
     };
     deleteFile(filename: string): Promise<{
         message: string;

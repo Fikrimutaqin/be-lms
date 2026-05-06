@@ -65,11 +65,33 @@ let UsersService = class UsersService {
         });
         return this.usersRepository.save(user);
     }
-    findAll() {
-        return this.usersRepository.find();
+    async findAll(query) {
+        const { page = 1, limit = 10 } = query;
+        const skip = (page - 1) * limit;
+        const [items, totalItems] = await this.usersRepository.findAndCount({
+            take: limit,
+            skip: skip,
+            order: { createdAt: 'DESC' },
+        });
+        const totalPages = Math.ceil(totalItems / limit);
+        return {
+            message: 'Users retrieved successfully',
+            data: items,
+            meta: {
+                totalItems,
+                itemCount: items.length,
+                itemsPerPage: Number(limit),
+                totalPages,
+                currentPage: Number(page),
+            },
+        };
     }
-    findOne(id) {
-        return this.usersRepository.findOneBy({ id });
+    async findOne(id) {
+        const user = await this.usersRepository.findOneBy({ id });
+        if (!user) {
+            throw new common_1.NotFoundException(`User with ID "${id}" not found`);
+        }
+        return user;
     }
     findByEmail(email) {
         return this.usersRepository.findOne({
@@ -78,7 +100,8 @@ let UsersService = class UsersService {
         });
     }
     async remove(id) {
-        await this.usersRepository.delete(id);
+        const user = await this.findOne(id);
+        await this.usersRepository.remove(user);
     }
 };
 exports.UsersService = UsersService;

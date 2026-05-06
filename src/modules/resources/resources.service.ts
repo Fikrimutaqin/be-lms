@@ -12,24 +12,44 @@ export class ResourcesService {
     private readonly resourceRepository: Repository<Resource>,
   ) {}
 
+  /**
+   * Menambahkan resource baru.
+   */
   async create(createResourceDto: CreateResourceDto): Promise<Resource> {
     const resource = this.resourceRepository.create(createResourceDto);
     return await this.resourceRepository.save(resource);
   }
 
-  async findAll(): Promise<Resource[]> {
-    return await this.resourceRepository.find({
+  /**
+   * Mengambil semua daftar resource.
+   */
+  async findAll() {
+    const resources = await this.resourceRepository.find({
       order: { sequenceOrder: 'ASC' },
     });
+    return {
+      message: 'All resources retrieved successfully',
+      data: resources
+    };
   }
 
-  async findByCourse(courseId: string): Promise<Resource[]> {
-    return await this.resourceRepository.find({
+  /**
+   * Mengambil semua resource milik kursus tertentu.
+   */
+  async findByCourse(courseId: string) {
+    const resources = await this.resourceRepository.find({
       where: { courseId },
       order: { sequenceOrder: 'ASC' },
     });
+    return {
+      message: 'Resources for the course retrieved successfully',
+      data: resources
+    };
   }
 
+  /**
+   * Mencari detail satu resource.
+   */
   async findOne(id: string): Promise<Resource> {
     const resource = await this.resourceRepository.findOne({
       where: { id },
@@ -43,12 +63,18 @@ export class ResourcesService {
     return resource;
   }
 
+  /**
+   * Memperbarui data resource.
+   */
   async update(id: string, updateResourceDto: UpdateResourceDto): Promise<Resource> {
     const resource = await this.findOne(id);
     const updatedResource = this.resourceRepository.merge(resource, updateResourceDto);
     return await this.resourceRepository.save(updatedResource);
   }
 
+  /**
+   * Menghapus resource.
+   */
   async remove(id: string): Promise<void> {
     const resource = await this.findOne(id);
     await this.resourceRepository.remove(resource);

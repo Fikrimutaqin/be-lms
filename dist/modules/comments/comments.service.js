@@ -18,6 +18,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const comment_entity_1 = require("./entities/comment.entity");
 const discussion_post_entity_1 = require("../discussion-posts/entities/discussion-post.entity");
+const user_entity_1 = require("../users/entities/user.entity");
 let CommentsService = class CommentsService {
     commentRepository;
     postRepository;
@@ -25,23 +26,34 @@ let CommentsService = class CommentsService {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
     }
-    async create(createCommentDto) {
-        const comment = this.commentRepository.create(createCommentDto);
+    async create(createCommentDto, user) {
+        const comment = this.commentRepository.create({
+            ...createCommentDto,
+            userId: user.id,
+        });
         const savedComment = await this.commentRepository.save(comment);
         await this.postRepository.increment({ id: createCommentDto.postId }, 'replyCount', 1);
         return savedComment;
     }
     async findAll() {
-        return await this.commentRepository.find({
+        const comments = await this.commentRepository.find({
             relations: ['user', 'post'],
         });
+        return {
+            message: 'All comments retrieved successfully',
+            data: comments
+        };
     }
     async findByPost(postId) {
-        return await this.commentRepository.find({
+        const comments = await this.commentRepository.find({
             where: { postId },
             relations: ['user'],
             order: { createdAt: 'ASC' },
         });
+        return {
+            message: 'Comments for the post retrieved successfully',
+            data: comments
+        };
     }
     async findOne(id) {
         const comment = await this.commentRepository.findOne({
@@ -53,13 +65,19 @@ let CommentsService = class CommentsService {
         }
         return comment;
     }
-    async update(id, updateCommentDto) {
+    async update(id, updateCommentDto, user) {
         const comment = await this.findOne(id);
+        if (comment.userId !== user.id && user.role !== user_entity_1.UserRole.ADMIN) {
+            throw new common_1.ForbiddenException('You do not have permission to update this comment');
+        }
         const updatedComment = this.commentRepository.merge(comment, updateCommentDto);
         return await this.commentRepository.save(updatedComment);
     }
-    async remove(id) {
+    async remove(id, user) {
         const comment = await this.findOne(id);
+        if (comment.userId !== user.id && user.role !== user_entity_1.UserRole.ADMIN) {
+            throw new common_1.ForbiddenException('You do not have permission to delete this comment');
+        }
         await this.commentRepository.remove(comment);
         await this.postRepository.decrement({ id: comment.postId }, 'replyCount', 1);
     }

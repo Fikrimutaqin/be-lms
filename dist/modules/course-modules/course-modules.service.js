@@ -27,15 +27,23 @@ let CourseModulesService = class CourseModulesService {
         return await this.moduleRepository.save(module);
     }
     async findAll() {
-        return await this.moduleRepository.find({
+        const modules = await this.moduleRepository.find({
             order: { sequenceOrder: 'ASC' },
         });
+        return {
+            message: 'All modules retrieved successfully',
+            data: modules
+        };
     }
     async findByCourse(courseId) {
-        return await this.moduleRepository.find({
+        const modules = await this.moduleRepository.find({
             where: { courseId },
             order: { sequenceOrder: 'ASC' },
         });
+        return {
+            message: 'Modules for the course retrieved successfully',
+            data: modules
+        };
     }
     async findOne(id) {
         const module = await this.moduleRepository.findOne({

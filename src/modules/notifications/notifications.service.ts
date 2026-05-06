@@ -12,31 +12,58 @@ export class NotificationsService {
     private readonly notificationRepository: Repository<Notification>,
   ) {}
 
+  /**
+   * Membuat notifikasi baru.
+   */
   async create(createNotificationDto: CreateNotificationDto): Promise<Notification> {
     const notification = this.notificationRepository.create(createNotificationDto);
     return await this.notificationRepository.save(notification);
   }
 
-  async findAll(): Promise<Notification[]> {
-    return await this.notificationRepository.find({
+  /**
+   * Mengambil semua daftar notifikasi yang ada di sistem.
+   */
+  async findAll() {
+    const notifications = await this.notificationRepository.find({
       order: { createdAt: 'DESC' },
     });
+    return {
+      message: 'All notifications retrieved successfully',
+      data: notifications
+    };
   }
 
-  async findByUser(userId: string): Promise<Notification[]> {
-    return await this.notificationRepository.find({
+  /**
+   * Mengambil riwayat notifikasi milik user tertentu.
+   */
+  async findByUser(userId: string) {
+    const notifications = await this.notificationRepository.find({
       where: { userId },
       order: { createdAt: 'DESC' },
     });
+    return {
+      message: 'User notifications retrieved successfully',
+      data: notifications
+    };
   }
 
-  async findUnreadByUser(userId: string): Promise<Notification[]> {
-    return await this.notificationRepository.find({
+  /**
+   * Mengambil notifikasi yang belum dibaca (Unread).
+   */
+  async findUnreadByUser(userId: string) {
+    const notifications = await this.notificationRepository.find({
       where: { userId, isRead: false },
       order: { createdAt: 'DESC' },
     });
+    return {
+      message: 'Unread notifications retrieved successfully',
+      data: notifications
+    };
   }
 
+  /**
+   * Mencari detail satu notifikasi.
+   */
   async findOne(id: string): Promise<Notification> {
     const notification = await this.notificationRepository.findOne({
       where: { id },
@@ -49,6 +76,10 @@ export class NotificationsService {
     return notification;
   }
 
+  /**
+   * Memperbarui status notifikasi.
+   * Jika ditandai isRead: true, maka otomatis mencatat waktu readAt.
+   */
   async update(id: string, updateNotificationDto: UpdateNotificationDto): Promise<Notification> {
     const notification = await this.findOne(id);
     
@@ -60,17 +91,29 @@ export class NotificationsService {
     return await this.notificationRepository.save(updatedNotification);
   }
 
+  /**
+   * Shortcut untuk menandai satu notifikasi sebagai sudah dibaca.
+   */
   async markAsRead(id: string): Promise<Notification> {
     return await this.update(id, { isRead: true });
   }
 
-  async markAllAsRead(userId: string): Promise<void> {
+  /**
+   * Menandai semua notifikasi user tersebut sebagai sudah dibaca sekaligus.
+   */
+  async markAllAsRead(userId: string) {
     await this.notificationRepository.update(
       { userId, isRead: false },
       { isRead: true, readAt: new Date() }
     );
+    return {
+      message: 'All notifications marked as read'
+    };
   }
 
+  /**
+   * Menghapus notifikasi.
+   */
   async remove(id: string): Promise<void> {
     const notification = await this.findOne(id);
     await this.notificationRepository.remove(notification);

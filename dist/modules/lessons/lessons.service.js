@@ -27,15 +27,23 @@ let LessonsService = class LessonsService {
         return await this.lessonRepository.save(lesson);
     }
     async findAll() {
-        return await this.lessonRepository.find({
+        const lessons = await this.lessonRepository.find({
             order: { sequenceOrder: 'ASC' },
         });
+        return {
+            message: 'All lessons retrieved successfully',
+            data: lessons
+        };
     }
     async findByModule(moduleId) {
-        return await this.lessonRepository.find({
+        const lessons = await this.lessonRepository.find({
             where: { moduleId },
             order: { sequenceOrder: 'ASC' },
         });
+        return {
+            message: 'Lessons for the module retrieved successfully',
+            data: lessons
+        };
     }
     async findOne(id) {
         const lesson = await this.lessonRepository.findOne({

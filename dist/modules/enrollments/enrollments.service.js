@@ -25,27 +25,52 @@ let EnrollmentsService = class EnrollmentsService {
         this.enrollmentRepository = enrollmentRepository;
         this.progressRepository = progressRepository;
     }
-    async create(createEnrollmentDto) {
-        const { userId, courseId } = createEnrollmentDto;
+    async create(createEnrollmentDto, user) {
+        const userId = user.id;
+        const { courseId } = createEnrollmentDto;
         const existing = await this.enrollmentRepository.findOne({
             where: { userId, courseId },
         });
         if (existing) {
             throw new common_1.ConflictException('User is already enrolled in this course');
         }
-        const enrollment = this.enrollmentRepository.create(createEnrollmentDto);
+        const enrollment = this.enrollmentRepository.create({
+            ...createEnrollmentDto,
+            userId,
+        });
         return await this.enrollmentRepository.save(enrollment);
     }
-    async findAll() {
-        return await this.enrollmentRepository.find({
+    async findAll(query) {
+        const { page = 1, limit = 10 } = query;
+        const skip = (page - 1) * limit;
+        const [items, totalItems] = await this.enrollmentRepository.findAndCount({
+            take: limit,
+            skip: skip,
             relations: ['user', 'course'],
+            order: { enrolledAt: 'DESC' },
         });
+        const totalPages = Math.ceil(totalItems / limit);
+        return {
+            message: 'Enrollments retrieved successfully',
+            data: items,
+            meta: {
+                totalItems,
+                itemCount: items.length,
+                itemsPerPage: Number(limit),
+                totalPages,
+                currentPage: Number(page),
+            },
+        };
     }
     async findByUser(userId) {
-        return await this.enrollmentRepository.find({
+        const enrollments = await this.enrollmentRepository.find({
             where: { userId },
             relations: ['course'],
         });
+        return {
+            message: 'User enrollments retrieved successfully',
+            data: enrollments
+        };
     }
     async findOne(id) {
         const enrollment = await this.enrollmentRepository.findOne({
@@ -70,14 +95,22 @@ let EnrollmentsService = class EnrollmentsService {
         await this.enrollmentRepository.remove(enrollment);
     }
     async getStudentProgress(userId) {
-        return await this.progressRepository.find({
+        const progress = await this.progressRepository.find({
             where: { userId },
         });
+        return {
+            message: 'Student progress retrieved successfully',
+            data: progress
+        };
     }
     async getCourseProgress(courseId) {
-        return await this.progressRepository.find({
+        const progress = await this.progressRepository.find({
             where: { courseId },
         });
+        return {
+            message: 'Course progress retrieved successfully',
+            data: progress
+        };
     }
 };
 exports.EnrollmentsService = EnrollmentsService;

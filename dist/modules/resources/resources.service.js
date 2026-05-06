@@ -27,15 +27,23 @@ let ResourcesService = class ResourcesService {
         return await this.resourceRepository.save(resource);
     }
     async findAll() {
-        return await this.resourceRepository.find({
+        const resources = await this.resourceRepository.find({
             order: { sequenceOrder: 'ASC' },
         });
+        return {
+            message: 'All resources retrieved successfully',
+            data: resources
+        };
     }
     async findByCourse(courseId) {
-        return await this.resourceRepository.find({
+        const resources = await this.resourceRepository.find({
             where: { courseId },
             order: { sequenceOrder: 'ASC' },
         });
+        return {
+            message: 'Resources for the course retrieved successfully',
+            data: resources
+        };
     }
     async findOne(id) {
         const resource = await this.resourceRepository.findOne({

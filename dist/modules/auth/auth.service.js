@@ -61,7 +61,10 @@ let AuthService = class AuthService {
         }
         const user = await this.usersService.create(registerDto);
         const { password, ...result } = user;
-        return result;
+        return {
+            message: 'User registered successfully',
+            data: result
+        };
     }
     async login(loginDto) {
         const user = await this.usersService.findByEmail(loginDto.email);
@@ -74,13 +77,16 @@ let AuthService = class AuthService {
         }
         const payload = { sub: user.id, email: user.email, role: user.role };
         return {
-            access_token: await this.jwtService.signAsync(payload),
-            user: {
-                id: user.id,
-                email: user.email,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                role: user.role,
+            message: 'Login successful',
+            data: {
+                access_token: await this.jwtService.signAsync(payload),
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    role: user.role,
+                }
             }
         };
     }

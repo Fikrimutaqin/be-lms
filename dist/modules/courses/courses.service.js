@@ -18,6 +18,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const course_entity_1 = require("./entities/course.entity");
 const course_stats_entity_1 = require("./entities/course-stats.entity");
+const user_entity_1 = require("../users/entities/user.entity");
 let CoursesService = class CoursesService {
     courseRepository;
     statsRepository;
@@ -25,14 +26,34 @@ let CoursesService = class CoursesService {
         this.courseRepository = courseRepository;
         this.statsRepository = statsRepository;
     }
-    async create(createCourseDto) {
-        const course = this.courseRepository.create(createCourseDto);
+    async create(createCourseDto, user) {
+        const course = this.courseRepository.create({
+            ...createCourseDto,
+            instructorId: user.id,
+        });
         return await this.courseRepository.save(course);
     }
-    async findAll() {
-        return await this.courseRepository.find({
+    async findAll(query) {
+        const { page = 1, limit = 10 } = query;
+        const skip = (page - 1) * limit;
+        const [items, totalItems] = await this.courseRepository.findAndCount({
+            take: limit,
+            skip: skip,
             relations: ['instructor'],
+            order: { createdAt: 'DESC' },
         });
+        const totalPages = Math.ceil(totalItems / limit);
+        return {
+            message: 'Courses retrieved successfully',
+            data: items,
+            meta: {
+                totalItems,
+                itemCount: items.length,
+                itemsPerPage: Number(limit),
+                totalPages,
+                currentPage: Number(page),
+            },
+        };
     }
     async findOne(id) {
         const course = await this.courseRepository.findOne({
@@ -44,13 +65,19 @@ let CoursesService = class CoursesService {
         }
         return course;
     }
-    async update(id, updateCourseDto) {
+    async update(id, updateCourseDto, user) {
         const course = await this.findOne(id);
+        if (course.instructorId !== user.id && user.role !== user_entity_1.UserRole.ADMIN) {
+            throw new common_1.ForbiddenException('You do not have permission to update this course');
+        }
         const updatedCourse = this.courseRepository.merge(course, updateCourseDto);
         return await this.courseRepository.save(updatedCourse);
     }
-    async remove(id) {
+    async remove(id, user) {
         const course = await this.findOne(id);
+        if (course.instructorId !== user.id && user.role !== user_entity_1.UserRole.ADMIN) {
+            throw new common_1.ForbiddenException('You do not have permission to delete this course');
+        }
         await this.courseRepository.remove(course);
     }
     async getStats() {

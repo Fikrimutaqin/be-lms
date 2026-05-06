@@ -12,24 +12,44 @@ export class QuizzesService {
     private readonly quizRepository: Repository<Quiz>,
   ) {}
 
+  /**
+   * Membuat kuis baru.
+   */
   async create(createQuizDto: CreateQuizDto): Promise<Quiz> {
     const quiz = this.quizRepository.create(createQuizDto);
     return await this.quizRepository.save(quiz);
   }
 
-  async findAll(): Promise<Quiz[]> {
-    return await this.quizRepository.find({
+  /**
+   * Mengambil semua daftar kuis.
+   */
+  async findAll() {
+    const quizzes = await this.quizRepository.find({
       relations: ['course'],
     });
+    return {
+      message: 'All quizzes retrieved successfully',
+      data: quizzes
+    };
   }
 
-  async findByCourse(courseId: string): Promise<Quiz[]> {
-    return await this.quizRepository.find({
+  /**
+   * Mengambil semua kuis yang ada di dalam kursus tertentu.
+   */
+  async findByCourse(courseId: string) {
+    const quizzes = await this.quizRepository.find({
       where: { courseId },
       order: { createdAt: 'DESC' },
     });
+    return {
+      message: 'Quizzes for the course retrieved successfully',
+      data: quizzes
+    };
   }
 
+  /**
+   * Mencari detail satu kuis.
+   */
   async findOne(id: string): Promise<Quiz> {
     const quiz = await this.quizRepository.findOne({
       where: { id },
@@ -43,12 +63,18 @@ export class QuizzesService {
     return quiz;
   }
 
+  /**
+   * Memperbarui pengaturan kuis.
+   */
   async update(id: string, updateQuizDto: UpdateQuizDto): Promise<Quiz> {
     const quiz = await this.findOne(id);
     const updatedQuiz = this.quizRepository.merge(quiz, updateQuizDto);
     return await this.quizRepository.save(updatedQuiz);
   }
 
+  /**
+   * Menghapus kuis.
+   */
   async remove(id: string): Promise<void> {
     const quiz = await this.findOne(id);
     await this.quizRepository.remove(quiz);

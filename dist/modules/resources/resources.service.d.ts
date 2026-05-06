@@ -6,8 +6,14 @@ export declare class ResourcesService {
     private readonly resourceRepository;
     constructor(resourceRepository: Repository<Resource>);
     create(createResourceDto: CreateResourceDto): Promise<Resource>;
-    findAll(): Promise<Resource[]>;
-    findByCourse(courseId: string): Promise<Resource[]>;
+    findAll(): Promise<{
+        message: string;
+        data: Resource[];
+    }>;
+    findByCourse(courseId: string): Promise<{
+        message: string;
+        data: Resource[];
+    }>;
     findOne(id: string): Promise<Resource>;
     update(id: string, updateResourceDto: UpdateResourceDto): Promise<Resource>;
     remove(id: string): Promise<void>;

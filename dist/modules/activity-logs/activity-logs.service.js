@@ -26,17 +26,37 @@ let ActivityLogsService = class ActivityLogsService {
         const log = this.logRepository.create(createActivityLogDto);
         return await this.logRepository.save(log);
     }
-    async findAll() {
-        return await this.logRepository.find({
+    async findAll(query) {
+        const { page = 1, limit = 10 } = query;
+        const skip = (page - 1) * limit;
+        const [items, totalItems] = await this.logRepository.findAndCount({
+            take: limit,
+            skip: skip,
             relations: ['user'],
             order: { createdAt: 'DESC' },
         });
+        const totalPages = Math.ceil(totalItems / limit);
+        return {
+            message: 'Activity logs retrieved successfully',
+            data: items,
+            meta: {
+                totalItems,
+                itemCount: items.length,
+                itemsPerPage: Number(limit),
+                totalPages,
+                currentPage: Number(page),
+            },
+        };
     }
     async findByUser(userId) {
-        return await this.logRepository.find({
+        const logs = await this.logRepository.find({
             where: { userId },
             order: { createdAt: 'DESC' },
         });
+        return {
+            message: 'User activity logs retrieved successfully',
+            data: logs
+        };
     }
     async findOne(id) {
         const log = await this.logRepository.findOne({

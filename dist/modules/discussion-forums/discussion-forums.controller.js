@@ -19,6 +19,8 @@ const discussion_forums_service_1 = require("./discussion-forums.service");
 const create_discussion_forum_dto_1 = require("./dto/create-discussion-forum.dto");
 const update_discussion_forum_dto_1 = require("./dto/update-discussion-forum.dto");
 const discussion_forum_entity_1 = require("./entities/discussion-forum.entity");
+const roles_decorator_1 = require("../../common/decorators/roles.decorator");
+const user_entity_1 = require("../users/entities/user.entity");
 let DiscussionForumsController = class DiscussionForumsController {
     discussionForumsService;
     constructor(discussionForumsService) {
@@ -46,6 +48,7 @@ let DiscussionForumsController = class DiscussionForumsController {
 exports.DiscussionForumsController = DiscussionForumsController;
 __decorate([
     (0, common_1.Post)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new discussion forum' }),
     (0, swagger_1.ApiResponse)({ status: 201, type: discussion_forum_entity_1.DiscussionForum }),
     __param(0, (0, common_1.Body)()),
@@ -55,6 +58,7 @@ __decorate([
 ], DiscussionForumsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Get all discussion forums' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: [discussion_forum_entity_1.DiscussionForum] }),
     __metadata("design:type", Function),
@@ -74,7 +78,6 @@ __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Get a discussion forum by id' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: discussion_forum_entity_1.DiscussionForum }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Forum not found.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -82,6 +85,7 @@ __decorate([
 ], DiscussionForumsController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Update a discussion forum' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: discussion_forum_entity_1.DiscussionForum }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
@@ -92,6 +96,7 @@ __decorate([
 ], DiscussionForumsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Delete a discussion forum' }),
     (0, swagger_1.ApiResponse)({ status: 204, description: 'Forum successfully deleted.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
@@ -101,6 +106,7 @@ __decorate([
 ], DiscussionForumsController.prototype, "remove", null);
 exports.DiscussionForumsController = DiscussionForumsController = __decorate([
     (0, swagger_1.ApiTags)('Discussion Forums'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('discussion-forums'),
     __metadata("design:paramtypes", [discussion_forums_service_1.DiscussionForumsService])
 ], DiscussionForumsController);

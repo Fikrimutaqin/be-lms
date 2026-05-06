@@ -6,8 +6,14 @@ export declare class GradesController {
     private readonly gradesService;
     constructor(gradesService: GradesService);
     create(createGradeDto: CreateGradeDto): Promise<Grade>;
-    findAll(): Promise<Grade[]>;
-    findByUser(userId: string): Promise<Grade[]>;
+    findAll(): Promise<{
+        message: string;
+        data: Grade[];
+    }>;
+    findByUser(userId: string): Promise<{
+        message: string;
+        data: Grade[];
+    }>;
     findOne(id: string): Promise<Grade>;
     update(id: string, updateGradeDto: UpdateGradeDto): Promise<Grade>;
     remove(id: string): Promise<void>;

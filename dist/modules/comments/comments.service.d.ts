@@ -7,10 +7,16 @@ export declare class CommentsService {
     private readonly commentRepository;
     private readonly postRepository;
     constructor(commentRepository: Repository<Comment>, postRepository: Repository<DiscussionPost>);
-    create(createCommentDto: CreateCommentDto): Promise<Comment>;
-    findAll(): Promise<Comment[]>;
-    findByPost(postId: string): Promise<Comment[]>;
+    create(createCommentDto: CreateCommentDto, user: any): Promise<Comment>;
+    findAll(): Promise<{
+        message: string;
+        data: Comment[];
+    }>;
+    findByPost(postId: string): Promise<{
+        message: string;
+        data: Comment[];
+    }>;
     findOne(id: string): Promise<Comment>;
-    update(id: string, updateCommentDto: UpdateCommentDto): Promise<Comment>;
-    remove(id: string): Promise<void>;
+    update(id: string, updateCommentDto: UpdateCommentDto, user: any): Promise<Comment>;
+    remove(id: string, user: any): Promise<void>;
 }

@@ -19,6 +19,9 @@ const courses_service_1 = require("./courses.service");
 const create_course_dto_1 = require("./dto/create-course.dto");
 const update_course_dto_1 = require("./dto/update-course.dto");
 const course_entity_1 = require("./entities/course.entity");
+const pagination_query_dto_1 = require("../../common/dto/pagination-query.dto");
+const roles_decorator_1 = require("../../common/decorators/roles.decorator");
+const user_entity_1 = require("../users/entities/user.entity");
 let CoursesController = class CoursesController {
     coursesService;
     constructor(coursesService) {
@@ -27,20 +30,20 @@ let CoursesController = class CoursesController {
     getStats() {
         return this.coursesService.getStats();
     }
-    create(createCourseDto) {
-        return this.coursesService.create(createCourseDto);
+    create(createCourseDto, req) {
+        return this.coursesService.create(createCourseDto, req.user);
     }
-    findAll() {
-        return this.coursesService.findAll();
+    findAll(query) {
+        return this.coursesService.findAll(query);
     }
     findOne(id) {
         return this.coursesService.findOne(id);
     }
-    update(id, updateCourseDto) {
-        return this.coursesService.update(id, updateCourseDto);
+    update(id, updateCourseDto, req) {
+        return this.coursesService.update(id, updateCourseDto, req.user);
     }
-    remove(id) {
-        return this.coursesService.remove(id);
+    remove(id, req) {
+        return this.coursesService.remove(id, req.user);
     }
 };
 exports.CoursesController = CoursesController;
@@ -54,19 +57,22 @@ __decorate([
 ], CoursesController.prototype, "getStats", null);
 __decorate([
     (0, common_1.Post)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new course' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'The course has been successfully created.', type: course_entity_1.Course }),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_course_dto_1.CreateCourseDto]),
+    __metadata("design:paramtypes", [create_course_dto_1.CreateCourseDto, Object]),
     __metadata("design:returntype", void 0)
 ], CoursesController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
     (0, swagger_1.ApiOperation)({ summary: 'Get all courses' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return all courses.', type: [course_entity_1.Course] }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return all courses.' }),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [pagination_query_dto_1.PaginationQueryDto]),
     __metadata("design:returntype", void 0)
 ], CoursesController.prototype, "findAll", null);
 __decorate([
@@ -81,23 +87,27 @@ __decorate([
 ], CoursesController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Update a course' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'The course has been successfully updated.', type: course_entity_1.Course }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Course not found.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_course_dto_1.UpdateCourseDto]),
+    __metadata("design:paramtypes", [String, update_course_dto_1.UpdateCourseDto, Object]),
     __metadata("design:returntype", void 0)
 ], CoursesController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Delete a course' }),
     (0, swagger_1.ApiResponse)({ status: 204, description: 'The course has been successfully deleted.' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Course not found.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], CoursesController.prototype, "remove", null);
 exports.CoursesController = CoursesController = __decorate([

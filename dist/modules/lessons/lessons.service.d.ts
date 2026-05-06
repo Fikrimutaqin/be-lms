@@ -6,8 +6,14 @@ export declare class LessonsService {
     private readonly lessonRepository;
     constructor(lessonRepository: Repository<Lesson>);
     create(createLessonDto: CreateLessonDto): Promise<Lesson>;
-    findAll(): Promise<Lesson[]>;
-    findByModule(moduleId: string): Promise<Lesson[]>;
+    findAll(): Promise<{
+        message: string;
+        data: Lesson[];
+    }>;
+    findByModule(moduleId: string): Promise<{
+        message: string;
+        data: Lesson[];
+    }>;
     findOne(id: string): Promise<Lesson>;
     update(id: string, updateLessonDto: UpdateLessonDto): Promise<Lesson>;
     remove(id: string): Promise<void>;

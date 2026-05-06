@@ -19,6 +19,8 @@ const assignments_service_1 = require("./assignments.service");
 const create_assignment_dto_1 = require("./dto/create-assignment.dto");
 const update_assignment_dto_1 = require("./dto/update-assignment.dto");
 const assignment_entity_1 = require("./entities/assignment.entity");
+const roles_decorator_1 = require("../../common/decorators/roles.decorator");
+const user_entity_1 = require("../users/entities/user.entity");
 let AssignmentsController = class AssignmentsController {
     assignmentsService;
     constructor(assignmentsService) {
@@ -46,6 +48,7 @@ let AssignmentsController = class AssignmentsController {
 exports.AssignmentsController = AssignmentsController;
 __decorate([
     (0, common_1.Post)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new assignment' }),
     (0, swagger_1.ApiResponse)({ status: 201, type: assignment_entity_1.Assignment }),
     __param(0, (0, common_1.Body)()),
@@ -55,6 +58,7 @@ __decorate([
 ], AssignmentsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Get all assignments' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: [assignment_entity_1.Assignment] }),
     __metadata("design:type", Function),
@@ -74,7 +78,6 @@ __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Get an assignment by id' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: assignment_entity_1.Assignment }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Assignment not found.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -82,6 +85,7 @@ __decorate([
 ], AssignmentsController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Update an assignment' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: assignment_entity_1.Assignment }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
@@ -92,6 +96,7 @@ __decorate([
 ], AssignmentsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Delete an assignment' }),
     (0, swagger_1.ApiResponse)({ status: 204, description: 'Assignment successfully deleted.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
@@ -101,6 +106,7 @@ __decorate([
 ], AssignmentsController.prototype, "remove", null);
 exports.AssignmentsController = AssignmentsController = __decorate([
     (0, swagger_1.ApiTags)('Assignments'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('assignments'),
     __metadata("design:paramtypes", [assignments_service_1.AssignmentsService])
 ], AssignmentsController);

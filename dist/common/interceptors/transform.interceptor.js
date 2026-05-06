@@ -11,7 +11,23 @@ const common_1 = require("@nestjs/common");
 const operators_1 = require("rxjs/operators");
 let TransformInterceptor = class TransformInterceptor {
     intercept(context, next) {
-        return next.handle().pipe((0, operators_1.map)((data) => ({ success: true, data })));
+        return next.handle().pipe((0, operators_1.map)((data) => {
+            if (!data) {
+                return {
+                    message: 'Request successful',
+                    data: null,
+                };
+            }
+            const hasMeta = data &&
+                typeof data === 'object' &&
+                'data' in data &&
+                'meta' in data;
+            return {
+                message: data.message || 'Request successful',
+                data: hasMeta ? data.data : data,
+                meta: hasMeta ? data.meta : undefined,
+            };
+        }));
     }
 };
 exports.TransformInterceptor = TransformInterceptor;

@@ -19,6 +19,8 @@ const lessons_service_1 = require("./lessons.service");
 const create_lesson_dto_1 = require("./dto/create-lesson.dto");
 const update_lesson_dto_1 = require("./dto/update-lesson.dto");
 const lesson_entity_1 = require("./entities/lesson.entity");
+const roles_decorator_1 = require("../../common/decorators/roles.decorator");
+const user_entity_1 = require("../users/entities/user.entity");
 let LessonsController = class LessonsController {
     lessonsService;
     constructor(lessonsService) {
@@ -46,6 +48,7 @@ let LessonsController = class LessonsController {
 exports.LessonsController = LessonsController;
 __decorate([
     (0, common_1.Post)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new lesson' }),
     (0, swagger_1.ApiResponse)({ status: 201, type: lesson_entity_1.Lesson }),
     __param(0, (0, common_1.Body)()),
@@ -55,6 +58,7 @@ __decorate([
 ], LessonsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Get all lessons' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: [lesson_entity_1.Lesson] }),
     __metadata("design:type", Function),
@@ -74,7 +78,6 @@ __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Get a lesson by id' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: lesson_entity_1.Lesson }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Lesson not found.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -82,6 +85,7 @@ __decorate([
 ], LessonsController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Update a lesson' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: lesson_entity_1.Lesson }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
@@ -92,6 +96,7 @@ __decorate([
 ], LessonsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Delete a lesson' }),
     (0, swagger_1.ApiResponse)({ status: 204, description: 'Lesson successfully deleted.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
@@ -101,6 +106,7 @@ __decorate([
 ], LessonsController.prototype, "remove", null);
 exports.LessonsController = LessonsController = __decorate([
     (0, swagger_1.ApiTags)('Lessons'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('lessons'),
     __metadata("design:paramtypes", [lessons_service_1.LessonsService])
 ], LessonsController);

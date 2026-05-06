@@ -1,29 +1,44 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { QuizAnswersService } from './quiz-answers.service';
 import { CreateQuizAnswerDto } from './dto/create-quiz-answer.dto';
 import { UpdateQuizAnswerDto } from './dto/update-quiz-answer.dto';
 import { QuizAnswer } from './entities/quiz-answer.entity';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { UserRole } from '../users/entities/user.entity';
 
 @ApiTags('Quiz Answers')
+@ApiBearerAuth()
 @Controller('quiz-answers')
 export class QuizAnswersController {
   constructor(private readonly quizAnswersService: QuizAnswersService) { }
 
+  /**
+   * Menambahkan pilihan jawaban untuk sebuah pertanyaan.
+   * Hanya Instruktur atau Admin.
+   */
   @Post()
-  @ApiOperation({ summary: 'Submit a quiz answer' })
+  @Roles(UserRole.INSTRUCTOR, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Create a quiz answer option' })
   @ApiResponse({ status: 201, type: QuizAnswer })
   create(@Body() createQuizAnswerDto: CreateQuizAnswerDto) {
     return this.quizAnswersService.create(createQuizAnswerDto);
   }
 
+  /**
+   * Mengambil semua daftar jawaban di sistem.
+   */
   @Get()
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get all quiz answers' })
   @ApiResponse({ status: 200, type: [QuizAnswer] })
   findAll() {
     return this.quizAnswersService.findAll();
   }
 
+  /**
+   * Mengambil semua pilihan jawaban untuk satu pertanyaan tertentu.
+   */
   @Get('question/:questionId')
   @ApiOperation({ summary: 'Get answers for a specific question' })
   @ApiResponse({ status: 200, type: [QuizAnswer] })
@@ -31,29 +46,32 @@ export class QuizAnswersController {
     return this.quizAnswersService.findByQuestion(questionId);
   }
 
-  @Get('user/:userId')
-  @ApiOperation({ summary: 'Get answers by a specific user' })
-  @ApiResponse({ status: 200, type: [QuizAnswer] })
-  findByUser(@Param('userId', ParseUUIDPipe) userId: string) {
-    return this.quizAnswersService.findByUser(userId);
-  }
-
+  /**
+   * Mengambil detail satu jawaban kuis.
+   */
   @Get(':id')
   @ApiOperation({ summary: 'Get a quiz answer by id' })
   @ApiResponse({ status: 200, type: QuizAnswer })
-  @ApiResponse({ status: 404, description: 'Answer not found.' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.quizAnswersService.findOne(id);
   }
 
+  /**
+   * Memperbarui data jawaban (misal: mengganti teks atau status benar/salah).
+   */
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a quiz answer (e.g. score)' })
+  @Roles(UserRole.INSTRUCTOR, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Update a quiz answer' })
   @ApiResponse({ status: 200, type: QuizAnswer })
   update(@Param('id', ParseUUIDPipe) id: string, @Body() updateQuizAnswerDto: UpdateQuizAnswerDto) {
     return this.quizAnswersService.update(id, updateQuizAnswerDto);
   }
 
+  /**
+   * Menghapus pilihan jawaban.
+   */
   @Delete(':id')
+  @Roles(UserRole.INSTRUCTOR, UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete a quiz answer' })
   @ApiResponse({ status: 204, description: 'Answer successfully deleted.' })
   remove(@Param('id', ParseUUIDPipe) id: string) {

@@ -35,8 +35,48 @@ let CategoriesService = class CategoriesService {
         const category = this.categoryRepository.create(createCategoryDto);
         return await this.categoryRepository.save(category);
     }
-    async findAll() {
-        return await this.categoryRepository.find();
+    async findAll(query) {
+        const { page = 1, limit = 10 } = query;
+        const skip = (page - 1) * limit;
+        const [items, totalItems] = await this.categoryRepository.findAndCount({
+            take: limit,
+            skip: skip,
+            order: { name: 'ASC' },
+        });
+        const totalPages = Math.ceil(totalItems / limit);
+        return {
+            message: 'Categories retrieved successfully',
+            data: items,
+            meta: {
+                totalItems,
+                itemCount: items.length,
+                itemsPerPage: Number(limit),
+                totalPages,
+                currentPage: Number(page),
+            },
+        };
+    }
+    async topCategories() {
+        const categories = await this.categoryRepository
+            .createQueryBuilder('category')
+            .leftJoin('courses', 'course', 'course.category = category.slug')
+            .leftJoin('enrollments', 'enrollment', 'enrollment.course_id = course.id')
+            .select([
+            'category.id AS id',
+            'category.name AS name',
+            'category.slug AS slug',
+            'category.image AS image',
+        ])
+            .addSelect('CAST(COUNT(enrollment.id) AS INTEGER)', 'courseSold')
+            .groupBy('category.id')
+            .orderBy('COUNT(enrollment.id)', 'DESC')
+            .having('COUNT(enrollment.id) > 0')
+            .limit(10)
+            .getRawMany();
+        return {
+            message: 'Top categories retrieved successfully',
+            data: categories
+        };
     }
     async findOne(id) {
         const category = await this.categoryRepository.findOne({ where: { id } });

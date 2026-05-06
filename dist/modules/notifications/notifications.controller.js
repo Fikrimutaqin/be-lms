@@ -17,8 +17,9 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const notifications_service_1 = require("./notifications.service");
 const create_notification_dto_1 = require("./dto/create-notification.dto");
-const update_notification_dto_1 = require("./dto/update-notification.dto");
 const notification_entity_1 = require("./entities/notification.entity");
+const roles_decorator_1 = require("../../common/decorators/roles.decorator");
+const user_entity_1 = require("../users/entities/user.entity");
 let NotificationsController = class NotificationsController {
     notificationsService;
     constructor(notificationsService) {
@@ -42,9 +43,6 @@ let NotificationsController = class NotificationsController {
     findOne(id) {
         return this.notificationsService.findOne(id);
     }
-    update(id, updateNotificationDto) {
-        return this.notificationsService.update(id, updateNotificationDto);
-    }
     markAsRead(id) {
         return this.notificationsService.markAsRead(id);
     }
@@ -55,6 +53,7 @@ let NotificationsController = class NotificationsController {
 exports.NotificationsController = NotificationsController;
 __decorate([
     (0, common_1.Post)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new notification' }),
     (0, swagger_1.ApiResponse)({ status: 201, type: notification_entity_1.Notification }),
     __param(0, (0, common_1.Body)()),
@@ -64,6 +63,7 @@ __decorate([
 ], NotificationsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Get all notifications' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: [notification_entity_1.Notification] }),
     __metadata("design:type", Function),
@@ -101,22 +101,11 @@ __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Get a notification by id' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: notification_entity_1.Notification }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Notification not found.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], NotificationsController.prototype, "findOne", null);
-__decorate([
-    (0, common_1.Patch)(':id'),
-    (0, swagger_1.ApiOperation)({ summary: 'Update a notification (e.g. mark as read)' }),
-    (0, swagger_1.ApiResponse)({ status: 200, type: notification_entity_1.Notification }),
-    __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_notification_dto_1.UpdateNotificationDto]),
-    __metadata("design:returntype", void 0)
-], NotificationsController.prototype, "update", null);
 __decorate([
     (0, common_1.Patch)(':id/read'),
     (0, swagger_1.ApiOperation)({ summary: 'Mark a notification as read' }),
@@ -137,6 +126,7 @@ __decorate([
 ], NotificationsController.prototype, "remove", null);
 exports.NotificationsController = NotificationsController = __decorate([
     (0, swagger_1.ApiTags)('Notifications'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('notifications'),
     __metadata("design:paramtypes", [notifications_service_1.NotificationsService])
 ], NotificationsController);

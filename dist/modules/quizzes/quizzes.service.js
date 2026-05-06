@@ -27,15 +27,23 @@ let QuizzesService = class QuizzesService {
         return await this.quizRepository.save(quiz);
     }
     async findAll() {
-        return await this.quizRepository.find({
+        const quizzes = await this.quizRepository.find({
             relations: ['course'],
         });
+        return {
+            message: 'All quizzes retrieved successfully',
+            data: quizzes
+        };
     }
     async findByCourse(courseId) {
-        return await this.quizRepository.find({
+        const quizzes = await this.quizRepository.find({
             where: { courseId },
             order: { createdAt: 'DESC' },
         });
+        return {
+            message: 'Quizzes for the course retrieved successfully',
+            data: quizzes
+        };
     }
     async findOne(id) {
         const quiz = await this.quizRepository.findOne({

@@ -17,33 +17,62 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const discussion_post_entity_1 = require("./entities/discussion-post.entity");
+const user_entity_1 = require("../users/entities/user.entity");
 let DiscussionPostsService = class DiscussionPostsService {
     postRepository;
     constructor(postRepository) {
         this.postRepository = postRepository;
     }
-    async create(createDiscussionPostDto) {
-        const post = this.postRepository.create(createDiscussionPostDto);
+    async create(createDiscussionPostDto, user) {
+        const post = this.postRepository.create({
+            ...createDiscussionPostDto,
+            userId: user.id,
+        });
         return await this.postRepository.save(post);
     }
-    async findAll() {
-        return await this.postRepository.find({
+    async findAll(query) {
+        const { page = 1, limit = 10 } = query;
+        const skip = (page - 1) * limit;
+        const [items, totalItems] = await this.postRepository.findAndCount({
+            take: limit,
+            skip: skip,
             relations: ['user', 'forum'],
+            order: { createdAt: 'DESC' },
         });
+        const totalPages = Math.ceil(totalItems / limit);
+        return {
+            message: 'Discussion posts retrieved successfully',
+            data: items,
+            meta: {
+                totalItems,
+                itemCount: items.length,
+                itemsPerPage: Number(limit),
+                totalPages,
+                currentPage: Number(page),
+            },
+        };
     }
     async findByForum(forumId) {
-        return await this.postRepository.find({
+        const posts = await this.postRepository.find({
             where: { forumId },
             relations: ['user'],
             order: { createdAt: 'DESC' },
         });
+        return {
+            message: 'Forum posts retrieved successfully',
+            data: posts
+        };
     }
     async findByUser(userId) {
-        return await this.postRepository.find({
+        const posts = await this.postRepository.find({
             where: { userId },
             relations: ['forum'],
             order: { createdAt: 'DESC' },
         });
+        return {
+            message: 'User posts retrieved successfully',
+            data: posts
+        };
     }
     async findOne(id) {
         const post = await this.postRepository.findOne({
@@ -57,13 +86,19 @@ let DiscussionPostsService = class DiscussionPostsService {
         await this.postRepository.save(post);
         return post;
     }
-    async update(id, updateDiscussionPostDto) {
+    async update(id, updateDiscussionPostDto, user) {
         const post = await this.findOne(id);
+        if (post.userId !== user.id && user.role !== user_entity_1.UserRole.ADMIN) {
+            throw new common_1.ForbiddenException('You do not have permission to update this post');
+        }
         const updatedPost = this.postRepository.merge(post, updateDiscussionPostDto);
         return await this.postRepository.save(updatedPost);
     }
-    async remove(id) {
+    async remove(id, user) {
         const post = await this.findOne(id);
+        if (post.userId !== user.id && user.role !== user_entity_1.UserRole.ADMIN) {
+            throw new common_1.ForbiddenException('You do not have permission to delete this post');
+        }
         await this.postRepository.remove(post);
     }
 };

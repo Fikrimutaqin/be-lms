@@ -19,6 +19,9 @@ const enrollments_service_1 = require("./enrollments.service");
 const create_enrollment_dto_1 = require("./dto/create-enrollment.dto");
 const update_enrollment_dto_1 = require("./dto/update-enrollment.dto");
 const enrollment_entity_1 = require("./entities/enrollment.entity");
+const pagination_query_dto_1 = require("../../common/dto/pagination-query.dto");
+const roles_decorator_1 = require("../../common/decorators/roles.decorator");
+const user_entity_1 = require("../users/entities/user.entity");
 let EnrollmentsController = class EnrollmentsController {
     enrollmentsService;
     constructor(enrollmentsService) {
@@ -30,11 +33,11 @@ let EnrollmentsController = class EnrollmentsController {
     getCourseProgress(courseId) {
         return this.enrollmentsService.getCourseProgress(courseId);
     }
-    create(createEnrollmentDto) {
-        return this.enrollmentsService.create(createEnrollmentDto);
+    create(createEnrollmentDto, req) {
+        return this.enrollmentsService.create(createEnrollmentDto, req.user);
     }
-    findAll() {
-        return this.enrollmentsService.findAll();
+    findAll(query) {
+        return this.enrollmentsService.findAll(query);
     }
     findByUser(userId) {
         return this.enrollmentsService.findByUser(userId);
@@ -72,24 +75,26 @@ __decorate([
     (0, common_1.Post)(),
     (0, swagger_1.ApiOperation)({ summary: 'Enroll a user in a course' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'User successfully enrolled.', type: enrollment_entity_1.Enrollment }),
-    (0, swagger_1.ApiResponse)({ status: 409, description: 'User already enrolled.' }),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_enrollment_dto_1.CreateEnrollmentDto]),
+    __metadata("design:paramtypes", [create_enrollment_dto_1.CreateEnrollmentDto, Object]),
     __metadata("design:returntype", void 0)
 ], EnrollmentsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Get all enrollments' }),
-    (0, swagger_1.ApiResponse)({ status: 200, type: [enrollment_entity_1.Enrollment] }),
+    (0, swagger_1.ApiResponse)({ status: 200 }),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [pagination_query_dto_1.PaginationQueryDto]),
     __metadata("design:returntype", void 0)
 ], EnrollmentsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('user/:userId'),
     (0, swagger_1.ApiOperation)({ summary: 'Get enrollments for a specific user' }),
-    (0, swagger_1.ApiResponse)({ status: 200, type: [enrollment_entity_1.Enrollment] }),
+    (0, swagger_1.ApiResponse)({ status: 200 }),
     __param(0, (0, common_1.Param)('userId', common_1.ParseUUIDPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -99,7 +104,6 @@ __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Get enrollment by id' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: enrollment_entity_1.Enrollment }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Enrollment not found.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -126,6 +130,7 @@ __decorate([
 ], EnrollmentsController.prototype, "remove", null);
 exports.EnrollmentsController = EnrollmentsController = __decorate([
     (0, swagger_1.ApiTags)('Enrollments'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('enrollments'),
     __metadata("design:paramtypes", [enrollments_service_1.EnrollmentsService])
 ], EnrollmentsController);

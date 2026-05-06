@@ -31,8 +31,10 @@ let UploadsController = class UploadsController {
         const fileUrl = this.uploadsService.formatFileUrl(file.filename);
         return {
             message: 'File uploaded successfully',
-            url: fileUrl,
-            filename: file.filename,
+            data: {
+                url: fileUrl,
+                filename: file.filename,
+            }
         };
     }
     deleteFile(filename) {
@@ -88,6 +90,7 @@ __decorate([
 ], UploadsController.prototype, "deleteFile", null);
 exports.UploadsController = UploadsController = __decorate([
     (0, swagger_1.ApiTags)('Uploads'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('uploads'),
     __metadata("design:paramtypes", [uploads_service_1.UploadsService])
 ], UploadsController);

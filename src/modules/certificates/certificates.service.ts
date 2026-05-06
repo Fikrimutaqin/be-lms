@@ -12,6 +12,10 @@ export class CertificatesService {
     private readonly certificateRepository: Repository<Certificate>,
   ) {}
 
+  /**
+   * Menerbitkan sertifikat.
+   * Dilakukan pengecekan agar satu siswa tidak mendapat sertifikat ganda untuk kursus yang sama.
+   */
   async create(createCertificateDto: CreateCertificateDto): Promise<Certificate> {
     const { userId, courseId } = createCertificateDto;
 
@@ -27,20 +31,37 @@ export class CertificatesService {
     return await this.certificateRepository.save(certificate);
   }
 
-  async findAll(): Promise<Certificate[]> {
-    return await this.certificateRepository.find({
+  /**
+   * Mengambil semua daftar sertifikat yang pernah diterbitkan.
+   */
+  async findAll() {
+    const certificates = await this.certificateRepository.find({
       relations: ['user', 'course'],
     });
+    return {
+      message: 'All certificates retrieved successfully',
+      data: certificates
+    };
   }
 
-  async findByUser(userId: string): Promise<Certificate[]> {
-    return await this.certificateRepository.find({
+  /**
+   * Mengambil koleksi sertifikat milik user tertentu.
+   */
+  async findByUser(userId: string) {
+    const certificates = await this.certificateRepository.find({
       where: { userId },
       relations: ['course'],
       order: { earnedAt: 'DESC' },
     });
+    return {
+      message: 'User certificates retrieved successfully',
+      data: certificates
+    };
   }
 
+  /**
+   * Mencari detail satu sertifikat.
+   */
   async findOne(id: string): Promise<Certificate> {
     const certificate = await this.certificateRepository.findOne({
       where: { id },
@@ -54,12 +75,18 @@ export class CertificatesService {
     return certificate;
   }
 
+  /**
+   * Memperbarui data sertifikat.
+   */
   async update(id: string, updateCertificateDto: UpdateCertificateDto): Promise<Certificate> {
     const certificate = await this.findOne(id);
     const updatedCertificate = this.certificateRepository.merge(certificate, updateCertificateDto);
     return await this.certificateRepository.save(updatedCertificate);
   }
 
+  /**
+   * Menghapus sertifikat dari sistem.
+   */
   async remove(id: string): Promise<void> {
     const certificate = await this.findOne(id);
     await this.certificateRepository.remove(certificate);

@@ -19,6 +19,10 @@ const categories_service_1 = require("./categories.service");
 const create_category_dto_1 = require("./dto/create-category.dto");
 const update_category_dto_1 = require("./dto/update-category.dto");
 const category_entity_1 = require("./entities/category.entity");
+const public_decorator_1 = require("../../common/decorators/public.decorator");
+const pagination_query_dto_1 = require("../../common/dto/pagination-query.dto");
+const roles_decorator_1 = require("../../common/decorators/roles.decorator");
+const user_entity_1 = require("../users/entities/user.entity");
 let CategoriesController = class CategoriesController {
     categoriesService;
     constructor(categoriesService) {
@@ -27,8 +31,11 @@ let CategoriesController = class CategoriesController {
     create(createCategoryDto) {
         return this.categoriesService.create(createCategoryDto);
     }
-    findAll() {
-        return this.categoriesService.findAll();
+    findAll(query) {
+        return this.categoriesService.findAll(query);
+    }
+    async getTopCategories() {
+        return await this.categoriesService.topCategories();
     }
     findOne(id) {
         return this.categoriesService.findOne(id);
@@ -43,6 +50,7 @@ let CategoriesController = class CategoriesController {
 exports.CategoriesController = CategoriesController;
 __decorate([
     (0, common_1.Post)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new category' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'The category has been successfully created.', type: category_entity_1.Category }),
     __param(0, (0, common_1.Body)()),
@@ -52,12 +60,23 @@ __decorate([
 ], CategoriesController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, public_decorator_1.Public)(),
     (0, swagger_1.ApiOperation)({ summary: 'Get all categories' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return all categories.', type: [category_entity_1.Category] }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return all categories.' }),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [pagination_query_dto_1.PaginationQueryDto]),
     __metadata("design:returntype", void 0)
 ], CategoriesController.prototype, "findAll", null);
+__decorate([
+    (0, public_decorator_1.Public)(),
+    (0, common_1.Get)('top'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get top 10 categories' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return top 10 categories.', type: [category_entity_1.Category] }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], CategoriesController.prototype, "getTopCategories", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Get a category by id' }),
@@ -70,6 +89,7 @@ __decorate([
 ], CategoriesController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Update a category' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'The category has been successfully updated.', type: category_entity_1.Category }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Category not found.' }),
@@ -81,6 +101,7 @@ __decorate([
 ], CategoriesController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Delete a category' }),
     (0, swagger_1.ApiResponse)({ status: 204, description: 'The category has been successfully deleted.' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Category not found.' }),

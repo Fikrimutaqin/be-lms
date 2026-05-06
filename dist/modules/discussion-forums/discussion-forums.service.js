@@ -27,15 +27,23 @@ let DiscussionForumsService = class DiscussionForumsService {
         return await this.forumRepository.save(forum);
     }
     async findAll() {
-        return await this.forumRepository.find({
+        const forums = await this.forumRepository.find({
             relations: ['course'],
         });
+        return {
+            message: 'All discussion forums retrieved successfully',
+            data: forums
+        };
     }
     async findByCourse(courseId) {
-        return await this.forumRepository.find({
+        const forums = await this.forumRepository.find({
             where: { courseId },
             order: { createdAt: 'DESC' },
         });
+        return {
+            message: 'Forums for the course retrieved successfully',
+            data: forums
+        };
     }
     async findOne(id) {
         const forum = await this.forumRepository.findOne({

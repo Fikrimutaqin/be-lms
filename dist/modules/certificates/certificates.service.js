@@ -34,16 +34,24 @@ let CertificatesService = class CertificatesService {
         return await this.certificateRepository.save(certificate);
     }
     async findAll() {
-        return await this.certificateRepository.find({
+        const certificates = await this.certificateRepository.find({
             relations: ['user', 'course'],
         });
+        return {
+            message: 'All certificates retrieved successfully',
+            data: certificates
+        };
     }
     async findByUser(userId) {
-        return await this.certificateRepository.find({
+        const certificates = await this.certificateRepository.find({
             where: { userId },
             relations: ['course'],
             order: { earnedAt: 'DESC' },
         });
+        return {
+            message: 'User certificates retrieved successfully',
+            data: certificates
+        };
     }
     async findOne(id) {
         const certificate = await this.certificateRepository.findOne({

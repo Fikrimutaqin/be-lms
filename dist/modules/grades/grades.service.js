@@ -30,16 +30,24 @@ let GradesService = class GradesService {
         return await this.gradeRepository.save(grade);
     }
     async findAll() {
-        return await this.gradeRepository.find({
+        const grades = await this.gradeRepository.find({
             relations: ['user', 'submission', 'quizAnswer'],
         });
+        return {
+            message: 'All grades retrieved successfully',
+            data: grades
+        };
     }
     async findByUser(userId) {
-        return await this.gradeRepository.find({
+        const grades = await this.gradeRepository.find({
             where: { userId },
             relations: ['submission', 'quizAnswer', 'submission.assignment', 'quizAnswer.quizQuestion'],
             order: { gradedAt: 'DESC' },
         });
+        return {
+            message: 'User grades retrieved successfully',
+            data: grades
+        };
     }
     async findOne(id) {
         const grade = await this.gradeRepository.findOne({

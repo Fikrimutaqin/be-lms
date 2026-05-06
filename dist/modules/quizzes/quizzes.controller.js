@@ -19,6 +19,8 @@ const quizzes_service_1 = require("./quizzes.service");
 const create_quiz_dto_1 = require("./dto/create-quiz.dto");
 const update_quiz_dto_1 = require("./dto/update-quiz.dto");
 const quiz_entity_1 = require("./entities/quiz.entity");
+const roles_decorator_1 = require("../../common/decorators/roles.decorator");
+const user_entity_1 = require("../users/entities/user.entity");
 let QuizzesController = class QuizzesController {
     quizzesService;
     constructor(quizzesService) {
@@ -46,6 +48,7 @@ let QuizzesController = class QuizzesController {
 exports.QuizzesController = QuizzesController;
 __decorate([
     (0, common_1.Post)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new quiz' }),
     (0, swagger_1.ApiResponse)({ status: 201, type: quiz_entity_1.Quiz }),
     __param(0, (0, common_1.Body)()),
@@ -55,6 +58,7 @@ __decorate([
 ], QuizzesController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Get all quizzes' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: [quiz_entity_1.Quiz] }),
     __metadata("design:type", Function),
@@ -74,7 +78,6 @@ __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Get a quiz by id' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: quiz_entity_1.Quiz }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Quiz not found.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -82,6 +85,7 @@ __decorate([
 ], QuizzesController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Update a quiz' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: quiz_entity_1.Quiz }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
@@ -92,6 +96,7 @@ __decorate([
 ], QuizzesController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, roles_decorator_1.Roles)(user_entity_1.UserRole.INSTRUCTOR, user_entity_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Delete a quiz' }),
     (0, swagger_1.ApiResponse)({ status: 204, description: 'Quiz successfully deleted.' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
@@ -101,6 +106,7 @@ __decorate([
 ], QuizzesController.prototype, "remove", null);
 exports.QuizzesController = QuizzesController = __decorate([
     (0, swagger_1.ApiTags)('Quizzes'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('quizzes'),
     __metadata("design:paramtypes", [quizzes_service_1.QuizzesService])
 ], QuizzesController);

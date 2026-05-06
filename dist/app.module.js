@@ -12,6 +12,9 @@ const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
+const core_1 = require("@nestjs/core");
+const jwt_auth_guard_1 = require("./common/guards/jwt-auth.guard");
+const roles_guard_1 = require("./common/guards/roles.guard");
 const users_module_1 = require("./modules/users/users.module");
 const auth_module_1 = require("./modules/auth/auth.module");
 const uploads_module_1 = require("./modules/uploads/uploads.module");
@@ -80,7 +83,17 @@ exports.AppModule = AppModule = __decorate([
             activity_logs_module_1.ActivityLogsModule,
         ],
         controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
+        providers: [
+            app_service_1.AppService,
+            {
+                provide: core_1.APP_GUARD,
+                useClass: jwt_auth_guard_1.JwtAuthGuard,
+            },
+            {
+                provide: core_1.APP_GUARD,
+                useClass: roles_guard_1.RolesGuard,
+            },
+        ],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

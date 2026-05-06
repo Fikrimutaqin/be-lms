@@ -6,8 +6,14 @@ export declare class DiscussionForumsService {
     private readonly forumRepository;
     constructor(forumRepository: Repository<DiscussionForum>);
     create(createDiscussionForumDto: CreateDiscussionForumDto): Promise<DiscussionForum>;
-    findAll(): Promise<DiscussionForum[]>;
-    findByCourse(courseId: string): Promise<DiscussionForum[]>;
+    findAll(): Promise<{
+        message: string;
+        data: DiscussionForum[];
+    }>;
+    findByCourse(courseId: string): Promise<{
+        message: string;
+        data: DiscussionForum[];
+    }>;
     findOne(id: string): Promise<DiscussionForum>;
     update(id: string, updateDiscussionForumDto: UpdateDiscussionForumDto): Promise<DiscussionForum>;
     remove(id: string): Promise<void>;

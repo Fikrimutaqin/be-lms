@@ -27,26 +27,27 @@ let QuizAnswersService = class QuizAnswersService {
         return await this.answerRepository.save(answer);
     }
     async findAll() {
-        return await this.answerRepository.find({
-            relations: ['user', 'quizQuestion'],
-        });
-    }
-    async findByQuestion(quizQuestionId) {
-        return await this.answerRepository.find({
-            where: { quizQuestionId },
-            relations: ['user'],
-        });
-    }
-    async findByUser(userId) {
-        return await this.answerRepository.find({
-            where: { userId },
+        const answers = await this.answerRepository.find({
             relations: ['quizQuestion'],
         });
+        return {
+            message: 'All quiz answers retrieved successfully',
+            data: answers
+        };
+    }
+    async findByQuestion(quizQuestionId) {
+        const answers = await this.answerRepository.find({
+            where: { quizQuestionId },
+        });
+        return {
+            message: 'Answers for the question retrieved successfully',
+            data: answers
+        };
     }
     async findOne(id) {
         const answer = await this.answerRepository.findOne({
             where: { id },
-            relations: ['user', 'quizQuestion'],
+            relations: ['quizQuestion'],
         });
         if (!answer) {
             throw new common_1.NotFoundException(`Quiz Answer with ID "${id}" not found`);

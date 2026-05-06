@@ -22,37 +22,51 @@ let SubmissionsService = class SubmissionsService {
     constructor(submissionRepository) {
         this.submissionRepository = submissionRepository;
     }
-    async create(createSubmissionDto) {
-        const { assignmentId, userId } = createSubmissionDto;
+    async create(createSubmissionDto, user) {
+        const { assignmentId } = createSubmissionDto;
+        const userId = user.id;
         const existing = await this.submissionRepository.findOne({
             where: { assignmentId, userId },
         });
         if (existing) {
-            throw new common_1.ConflictException('User has already submitted for this assignment');
+            throw new common_1.ConflictException('You have already submitted for this assignment');
         }
         const submission = this.submissionRepository.create({
             ...createSubmissionDto,
+            userId,
             status: createSubmissionDto.status || submission_entity_1.SubmissionStatus.SUBMITTED,
             submittedAt: new Date(),
         });
         return await this.submissionRepository.save(submission);
     }
     async findAll() {
-        return await this.submissionRepository.find({
+        const submissions = await this.submissionRepository.find({
             relations: ['user', 'assignment', 'assignment.course'],
         });
+        return {
+            message: 'All submissions retrieved successfully',
+            data: submissions
+        };
     }
     async findByAssignment(assignmentId) {
-        return await this.submissionRepository.find({
+        const submissions = await this.submissionRepository.find({
             where: { assignmentId },
             relations: ['user'],
         });
+        return {
+            message: 'Submissions for the assignment retrieved successfully',
+            data: submissions
+        };
     }
     async findByUser(userId) {
-        return await this.submissionRepository.find({
+        const submissions = await this.submissionRepository.find({
             where: { userId },
             relations: ['assignment', 'assignment.course'],
         });
+        return {
+            message: 'User submissions retrieved successfully',
+            data: submissions
+        };
     }
     async findOne(id) {
         const submission = await this.submissionRepository.findOne({
