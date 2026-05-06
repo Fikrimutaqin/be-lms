@@ -15,13 +15,9 @@ async function bootstrap() {
     prefix: '/uploads',
   });
 
-  // Enable CORS
   app.enableCors();
-
-  // 1. SET GLOBAL PREFIX DULU
   app.setGlobalPrefix('api');
 
-  // 2. KONFIGURASI SWAGGER
   const config = new DocumentBuilder()
     .setTitle('NexLearn LMS API')
     .setDescription('The Learning Management System API documentation')
@@ -31,26 +27,22 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
 
-  // Kita pasang di 'docs'. Karena ada prefix 'api', URL-nya jadi /api/docs
+  // Setup Swagger dengan CDN untuk Vercel
   SwaggerModule.setup('docs', app, document, {
     useGlobalPrefix: true,
     customSiteTitle: 'NexLearn LMS API Docs',
-    customfavIcon: 'https://avatars.githubusercontent.com/u/1630472?s=200&v=4',
     customJs: [
       'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js',
       'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js',
     ],
     customCssUrl: [
       'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css',
-      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.css',
     ],
   });
 
-  // Global Filters & Interceptors
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalInterceptors(new TransformInterceptor());
 
-  // Global Validation
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     forbidNonWhitelisted: true,
@@ -58,10 +50,16 @@ async function bootstrap() {
   }));
 
   const port = process.env.PORT ?? 3000;
-  await app.listen(port);
+  
+  // Hanya listen jika tidak berjalan di Vercel (Production)
+  if (process.env.NODE_ENV !== 'production') {
+    await app.listen(port);
+    const logger = new Logger('Bootstrap');
+    logger.log(`Application is running on: http://localhost:${port}/api`);
+  }
 
-  const logger = new Logger('Bootstrap');
-  logger.log(`Application is running on: http://localhost:${port}/api`);
-  logger.log(`Swagger documentation: http://localhost:${port}/api/docs`);
+  return app.getHttpAdapter().getInstance();
 }
-bootstrap();
+
+// Export handler untuk Vercel
+export default bootstrap();
