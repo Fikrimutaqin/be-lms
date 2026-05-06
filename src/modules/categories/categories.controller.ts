@@ -4,9 +4,9 @@ import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
-import { Public } from 'src/common/decorators/public.decorator';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
-import { Roles } from 'src/common/decorators/roles.decorator';
+import { Public } from '../../common/decorators/public.decorator';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
 
 @ApiTags('Categories')

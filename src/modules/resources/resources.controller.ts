@@ -4,7 +4,7 @@ import { ResourcesService } from './resources.service';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
 import { Resource } from './entities/resource.entity';
-import { Roles } from 'src/common/decorators/roles.decorator';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
 
 @ApiTags('Resources')

@@ -4,7 +4,7 @@ import { SubmissionsService } from './submissions.service';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { UpdateSubmissionDto } from './dto/update-submission.dto';
 import { Submission } from './entities/submission.entity';
-import { Roles } from 'src/common/decorators/roles.decorator';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
 import type { Request } from 'express';
 

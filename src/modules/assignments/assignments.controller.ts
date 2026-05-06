@@ -4,7 +4,7 @@ import { AssignmentsService } from './assignments.service';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { UpdateAssignmentDto } from './dto/update-assignment.dto';
 import { Assignment } from './entities/assignment.entity';
-import { Roles } from 'src/common/decorators/roles.decorator';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
 
 @ApiTags('Assignments')

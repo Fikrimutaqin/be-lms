@@ -4,8 +4,8 @@ import { EnrollmentsService } from './enrollments.service';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
 import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
 import { Enrollment } from './entities/enrollment.entity';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
-import { Roles } from 'src/common/decorators/roles.decorator';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
 import type { Request } from 'express';
 

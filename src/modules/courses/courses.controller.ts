@@ -5,8 +5,8 @@ import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { Course } from './entities/course.entity';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
-import { Roles } from 'src/common/decorators/roles.decorator';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
 
 @ApiTags('Courses')

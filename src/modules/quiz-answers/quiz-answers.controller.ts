@@ -4,7 +4,7 @@ import { QuizAnswersService } from './quiz-answers.service';
 import { CreateQuizAnswerDto } from './dto/create-quiz-answer.dto';
 import { UpdateQuizAnswerDto } from './dto/update-quiz-answer.dto';
 import { QuizAnswer } from './entities/quiz-answer.entity';
-import { Roles } from 'src/common/decorators/roles.decorator';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
 
 @ApiTags('Quiz Answers')

@@ -5,7 +5,7 @@ import { Enrollment, EnrollmentStatus } from './entities/enrollment.entity';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
 import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
 import { StudentProgress } from './entities/student-progress.entity';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 
 @Injectable()
 export class EnrollmentsService {

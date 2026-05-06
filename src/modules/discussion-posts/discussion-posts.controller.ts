@@ -4,7 +4,7 @@ import { DiscussionPostsService } from './discussion-posts.service';
 import { CreateDiscussionPostDto } from './dto/create-discussion-post.dto';
 import { UpdateDiscussionPostDto } from './dto/update-discussion-post.dto';
 import { DiscussionPost } from './entities/discussion-post.entity';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 import type { Request } from 'express';
 
 @ApiTags('Discussion Posts')

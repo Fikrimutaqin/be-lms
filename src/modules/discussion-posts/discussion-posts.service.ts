@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { DiscussionPost } from './entities/discussion-post.entity';
 import { CreateDiscussionPostDto } from './dto/create-discussion-post.dto';
 import { UpdateDiscussionPostDto } from './dto/update-discussion-post.dto';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 import { UserRole } from '../users/entities/user.entity';
 
 @Injectable()

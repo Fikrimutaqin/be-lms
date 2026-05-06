@@ -4,7 +4,7 @@ import { DiscussionForumsService } from './discussion-forums.service';
 import { CreateDiscussionForumDto } from './dto/create-discussion-forum.dto';
 import { UpdateDiscussionForumDto } from './dto/update-discussion-forum.dto';
 import { DiscussionForum } from './entities/discussion-forum.entity';
-import { Roles } from 'src/common/decorators/roles.decorator';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
 
 @ApiTags('Discussion Forums')

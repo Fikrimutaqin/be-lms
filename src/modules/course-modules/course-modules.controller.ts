@@ -4,7 +4,7 @@ import { CourseModulesService } from './course-modules.service';
 import { CreateCourseModuleDto } from './dto/create-course-module.dto';
 import { UpdateCourseModuleDto } from './dto/update-course-module.dto';
 import { CourseModule } from './entities/course-module.entity';
-import { Roles } from 'src/common/decorators/roles.decorator';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
 
 @ApiTags('Course Modules')

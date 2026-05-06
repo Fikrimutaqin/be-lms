@@ -3,9 +3,9 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagg
 import { ActivityLogsService } from './activity-logs.service';
 import { CreateActivityLogDto } from './dto/create-activity-log.dto';
 import { ActivityLog } from './entities/activity-log.entity';
-import { Roles } from 'src/common/decorators/roles.decorator';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 
 @ApiTags('Activity Logs')
 @ApiBearerAuth()
