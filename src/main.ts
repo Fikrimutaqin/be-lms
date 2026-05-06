@@ -34,6 +34,16 @@ async function bootstrap() {
   // Kita pasang di 'docs'. Karena ada prefix 'api', URL-nya jadi /api/docs
   SwaggerModule.setup('docs', app, document, {
     useGlobalPrefix: true,
+    customSiteTitle: 'NexLearn LMS API Docs',
+    customfavIcon: 'https://avatars.githubusercontent.com/u/1630472?s=200&v=4',
+    customJs: [
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js',
+    ],
+    customCssUrl: [
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css',
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.css',
+    ],
   });
 
   // Global Filters & Interceptors
