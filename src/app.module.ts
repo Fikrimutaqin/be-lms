@@ -35,17 +35,30 @@ import { ActivityLogsModule } from './modules/activity-logs/activity-logs.module
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('DB_HOST'),
-        port: configService.get<number>('DB_PORT'),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_DATABASE'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: false, // Switch to false because we will use migrations
-        migrations: [__dirname + '/database/migrations/*{.ts,.js}'],
-      }),
+      useFactory: (configService: ConfigService) => {
+        const databaseUrl = configService.get<string>('DATABASE_URL');
+        
+        return {
+          type: 'postgres',
+          // Jika ada DATABASE_URL (seperti di Neon/Heroku), gunakan itu. 
+          // Jika tidak ada, gunakan konfigurasi individual.
+          url: databaseUrl,
+          host: databaseUrl ? undefined : configService.get<string>('DB_HOST'),
+          port: databaseUrl ? undefined : configService.get<number>('DB_PORT'),
+          username: databaseUrl ? undefined : configService.get<string>('DB_USERNAME'),
+          password: databaseUrl ? undefined : configService.get<string>('DB_PASSWORD'),
+          database: databaseUrl ? undefined : configService.get<string>('DB_DATABASE'),
+          entities: [__dirname + '/**/*.entity{.ts,.js}'],
+          synchronize: false, // Diset false demi keamanan data (gunakan migrasi)
+          
+          // Konfigurasi SSL untuk Neon atau Cloud Database lainnya
+          ssl: databaseUrl || configService.get<string>('DB_SSL') === 'true' 
+            ? { rejectUnauthorized: false } 
+            : false,
+          
+          migrations: [__dirname + '/database/migrations/*{.ts,.js}'],
+        };
+      },
       inject: [ConfigService],
     }),
     UsersModule,
