@@ -7,44 +7,54 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 
-let app: (arg0: any, arg1: any) => any;
+async function bootstrap() {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-async function createApp() {
-  const nestApp = await NestFactory.create<NestExpressApplication>(AppModule);
-
-  nestApp.useStaticAssets(join(__dirname, '..', 'uploads'), {
+  // static file
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
     prefix: '/uploads',
   });
 
-  nestApp.enableCors();
+  app.enableCors();
 
+  // ✅ VERSION PREFIX (BEST PRACTICE)
+  app.setGlobalPrefix('v1');
+
+  // ✅ SWAGGER
   const config = new DocumentBuilder()
     .setTitle('NexLearn LMS API')
+    .setDescription('API Documentation')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
 
-  const document = SwaggerModule.createDocument(nestApp, config);
+  const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('docs', nestApp, document);
+  SwaggerModule.setup('docs', app, document, {
+    useGlobalPrefix: true,
+    customJs: [
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js',
+    ],
+    customCssUrl: [
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css',
+    ],
+  });
 
-  nestApp.useGlobalFilters(new AllExceptionsFilter());
-  nestApp.useGlobalInterceptors(new TransformInterceptor());
+  // global config
+  app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalInterceptors(new TransformInterceptor());
 
-  nestApp.useGlobalPipes(new ValidationPipe({
+  app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     forbidNonWhitelisted: true,
     transform: true,
   }));
 
-  await nestApp.init();
+  // ❗ WAJIB untuk serverless
+  await app.init();
 
-  return nestApp.getHttpAdapter().getInstance();
+  return app.getHttpAdapter().getInstance();
 }
 
-export default async function handler(req: any, res: any) {
-  if (!app) {
-    app = await createApp();
-  }
-  return app(req, res);
-}
+export default bootstrap;
