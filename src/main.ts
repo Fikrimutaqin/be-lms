@@ -10,7 +10,6 @@ import { join } from 'path';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // Serve static files from 'uploads' folder
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
     prefix: '/uploads',
   });
@@ -26,17 +25,8 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
 
-  // Setup Swagger dengan CDN untuk Vercel
   SwaggerModule.setup('docs', app, document, {
-    useGlobalPrefix: true,
     customSiteTitle: 'NexLearn LMS API Docs',
-    customJs: [
-      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js',
-      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js',
-    ],
-    customCssUrl: [
-      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css',
-    ],
   });
 
   app.useGlobalFilters(new AllExceptionsFilter());
@@ -48,17 +38,10 @@ async function bootstrap() {
     transform: true,
   }));
 
-  const port = process.env.PORT ?? 3000;
-
-  // Hanya listen jika tidak berjalan di Vercel (Production)
-  if (process.env.NODE_ENV !== 'production') {
-    await app.listen(port);
-    const logger = new Logger('Bootstrap');
-    logger.log(`Application is running on: http://localhost:${port}/api`);
-  }
+  // 🔥 WAJIB untuk Vercel
+  await app.init();
 
   return app.getHttpAdapter().getInstance();
 }
 
-// Export handler untuk Vercel
-export default bootstrap();
+export default bootstrap;
