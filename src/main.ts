@@ -9,9 +9,7 @@ import { join } from 'path';
 
 let app: (arg0: any, arg1: any) => any;
 
-async function createApp() {
-  const nestApp = await NestFactory.create<NestExpressApplication>(AppModule);
-
+async function setupApp(nestApp: NestExpressApplication) {
   nestApp.useStaticAssets(join(__dirname, '..', 'uploads'), {
     prefix: '/uploads',
   });
@@ -48,10 +46,31 @@ async function createApp() {
   }));
 
   await nestApp.init();
+}
 
+async function createApp() {
+  const nestApp = await NestFactory.create<NestExpressApplication>(AppModule);
+  await setupApp(nestApp);
   return nestApp.getHttpAdapter().getInstance();
 }
 
+// Fungsi untuk menjalankan server di lokal (standalone)
+async function bootstrap() {
+  const nestApp = await NestFactory.create<NestExpressApplication>(AppModule);
+  await setupApp(nestApp);
+  
+  const port = process.env.PORT || 3000;
+  await nestApp.listen(port);
+  console.log(`\n🚀 Server is running on: http://localhost:${port}/api/v1`);
+  console.log(`📝 Swagger Docs: http://localhost:${port}/docs\n`);
+}
+
+// Jalankan bootstrap jika tidak di environment Vercel (lokal)
+if (!process.env.VERCEL) {
+  bootstrap();
+}
+
+// Export handler untuk Vercel
 export default async function handler(req: any, res: any) {
   if (!app) {
     app = await createApp();

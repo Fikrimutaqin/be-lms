@@ -12,11 +12,25 @@ export class CreateCourseDto {
   @IsString()
   description?: string;
 
-  @ApiPropertyOptional({ example: 'Web Development' })
+  @ApiPropertyOptional({ example: 'https://example.com/course-image.jpg' })
   @IsOptional()
   @IsString()
-  @MaxLength(100)
-  category?: string;
+  image?: string;
+
+  @ApiPropertyOptional({ example: 'https://example.com/course-banner.jpg' })
+  @IsOptional()
+  @IsString()
+  banner?: string;
+
+  @ApiProperty({ example: 99.99 })
+  @IsOptional()
+  @IsNumber()
+  price?: number;
+
+  @ApiPropertyOptional({ example: 'uuid-of-category' })
+  @IsOptional()
+  @IsUUID()
+  categoryId?: string;
 
   @ApiPropertyOptional({ example: 10.5 })
   @IsOptional()

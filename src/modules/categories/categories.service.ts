@@ -5,13 +5,14 @@ import { Category } from './entities/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { metadata } from 'reflect-metadata/no-conflict';
 
 @Injectable()
 export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
-  ) {}
+  ) { }
 
   /**
    * Menambahkan kategori baru.
@@ -116,5 +117,86 @@ export class CategoriesService {
   async remove(id: string): Promise<void> {
     const category = await this.findOne(id);
     await this.categoryRepository.remove(category);
+  }
+
+  /**
+   * Menampilkan list kategori dan jumlah kursus dalam kategori tersebut
+   */
+  async showListCategoriesWithCourse(query: PaginationQueryDto) {
+    const { limit = 10, page = 1 } = query;
+    const skip = (page - 1) * limit;
+
+    const categories = await this.categoryRepository
+      .createQueryBuilder('category')
+      // Join menggunakan category_id
+      .leftJoin('courses', 'course', 'course.category_id = category.id')
+      .select([
+        'category.id AS id',
+        'category.name AS name',
+        'category.slug AS slug',
+        'category.image AS image',
+      ])
+      // Mengumpulkan semua data kursus yang terkait ke dalam array JSON
+      .addSelect(`
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'id', course.id,
+              'title', course.title,
+              'description', course.description,
+              'image', course.image,
+              'banner', course.banner,
+              'price', course.price,
+              'instructorId', course.instructor_id,
+              'createdAt', course.created_at
+            )
+          ) FILTER (WHERE course.id IS NOT NULL), 
+          '[]'
+        )
+      `, 'courses')
+      .groupBy('category.id')
+      .orderBy('category.name', 'ASC')
+      .limit(limit)
+      .offset(skip)
+      .getRawMany();
+
+    return {
+      message: 'Categories with courses retrieved successfully',
+      data: categories,
+      metadata: {
+        total: categories.length,
+        limit: Number(limit),
+        page: Number(page),
+      }
+    };
+  }
+
+  /**
+   * Menampilkan semua kursus yang ada di dalam kategori tertentu berdasarkan ID Kategori.
+   */
+  async findCoursesByCategory(id: string, query: PaginationQueryDto) {
+    const category = await this.findOne(id);
+    const { page = 1, limit = 10 } = query;
+    const skip = (page - 1) * limit;
+
+    const [courses, totalItems] = await this.categoryRepository.manager
+      .createQueryBuilder('courses', 'course')
+      .leftJoinAndSelect('course.instructor', 'instructor')
+      .where('course.category_id = :id', { id: category.id })
+      .take(limit)
+      .skip(skip)
+      .getManyAndCount();
+
+    return {
+      message: `Courses for category '${category.name}' retrieved successfully`,
+      data: courses,
+      meta: {
+        totalItems,
+        itemCount: courses.length,
+        itemsPerPage: Number(limit),
+        totalPages: Math.ceil(totalItems / limit),
+        currentPage: Number(page),
+      },
+    };
   }
 }

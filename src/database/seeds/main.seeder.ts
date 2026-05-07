@@ -36,11 +36,47 @@ export default class MainSeeder implements Seeder {
 
         // Seed Courses
         await dataSource.query(`
-            INSERT INTO courses (instructor_id, title, description, category, duration_hours) VALUES
-            ((SELECT id FROM users WHERE email = 'john.instructor@lms.com'), 'Introduction to Web Development', 'Learn the fundamentals of web development', 'Technology', 40),
-            ((SELECT id FROM users WHERE email = 'john.instructor@lms.com'), 'Advanced NestJS Patterns', 'Master microservices and advanced architecture in NestJS', 'Development', 25.5),
-            ((SELECT id FROM users WHERE email = 'john.instructor@lms.com'), 'UI/UX Design Essentials', 'Learn to create beautiful and functional user interfaces', 'Design', 15.0),
-            ((SELECT id FROM users WHERE email = 'john.instructor@lms.com'), 'Fullstack TypeScript Mastery', 'From frontend to backend with one language', 'Fullstack', 60.0)
+            INSERT INTO courses (instructor_id, title, description, category_id, image, banner, price, duration_hours) VALUES
+            (
+                (SELECT id FROM users WHERE email = 'john.instructor@lms.com'), 
+                'Introduction to Web Development', 
+                'Learn the fundamentals of web development', 
+                (SELECT id FROM categories WHERE name = 'Technology' LIMIT 1), 
+                'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=800',
+                'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=1200',
+                49.99,
+                40
+            ),
+            (
+                (SELECT id FROM users WHERE email = 'john.instructor@lms.com'), 
+                'Advanced NestJS Patterns', 
+                'Master microservices and advanced architecture in NestJS', 
+                (SELECT id FROM categories WHERE name = 'Development' LIMIT 1), 
+                'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=800',
+                'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1200',
+                89.99,
+                25.5
+            ),
+            (
+                (SELECT id FROM users WHERE email = 'john.instructor@lms.com'), 
+                'UI/UX Design Essentials', 
+                'Learn to create beautiful and functional user interfaces', 
+                (SELECT id FROM categories WHERE name = 'Design' LIMIT 1), 
+                'https://images.unsplash.com/photo-1586717791821-3f44a563eb4c?auto=format&fit=crop&q=80&w=800',
+                'https://images.unsplash.com/photo-1586717791821-3f44a563eb4c?auto=format&fit=crop&q=80&w=1200',
+                29.99,
+                15.0
+            ),
+            (
+                (SELECT id FROM users WHERE email = 'john.instructor@lms.com'), 
+                'Fullstack TypeScript Mastery', 
+                'From frontend to backend with one language', 
+                (SELECT id FROM categories WHERE name = 'Development' LIMIT 1), 
+                'https://images.unsplash.com/photo-1516116216624-53e697fedbea?auto=format&fit=crop&q=80&w=800',
+                'https://images.unsplash.com/photo-1516116216624-53e697fedbea?auto=format&fit=crop&q=80&w=1200',
+                129.99,
+                60.0
+            )
             ON CONFLICT DO NOTHING;
         `);
 

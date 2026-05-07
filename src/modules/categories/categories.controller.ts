@@ -39,6 +39,17 @@ export class CategoriesController {
   }
 
   /**
+   * Mengambil semua kategori dan jumlah kursus di dalamnya.
+   */
+  @Public()
+  @Get('with-courses')
+  @ApiOperation({ summary: 'Get all categories with course' })
+  @ApiResponse({ status: 200, description: 'Return all categories with course.' })
+  showListCategoriesWithCourse(@Query() query: PaginationQueryDto) {
+    return this.categoriesService.showListCategoriesWithCourse(query);
+  }
+
+  /**
    * Mengambil Top 10 kategori berdasarkan jumlah kursus yang terjual.
    * Digunakan untuk bagian "Trending" atau "Popular" di frontend.
    */
@@ -59,6 +70,20 @@ export class CategoriesController {
   @ApiResponse({ status: 404, description: 'Category not found.' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.categoriesService.findOne(id);
+  }
+
+  /**
+   * Mengambil daftar kursus yang ada di dalam kategori tertentu.
+   */
+  @Public()
+  @Get(':id/courses')
+  @ApiOperation({ summary: 'Get courses by category id' })
+  @ApiResponse({ status: 200, description: 'Return all courses in this category.' })
+  findCoursesByCategory(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query() query: PaginationQueryDto,
+  ) {
+    return this.categoriesService.findCoursesByCategory(id, query);
   }
 
   /**

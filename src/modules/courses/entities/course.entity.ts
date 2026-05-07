@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { Category } from '../../categories/entities/category.entity';
 
 @Entity('courses')
 export class Course {
@@ -19,8 +20,21 @@ export class Course {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column({ length: 100, nullable: true })
-  category: string;
+  @Column({ type: 'text', nullable: true })
+  image: string;
+
+  @Column({ type: 'text', nullable: true })
+  banner: string;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  price: number;
+
+  @Column({ name: 'category_id', nullable: true })
+  categoryId: string;
+
+  @ManyToOne(() => Category, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'category_id' })
+  category: Category;
 
   @Column({ name: 'duration_hours', type: 'decimal', precision: 10, scale: 2, nullable: true })
   durationHours: number;
