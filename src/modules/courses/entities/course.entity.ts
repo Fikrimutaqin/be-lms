@@ -39,6 +39,9 @@ export class Course {
   @Column({ name: 'duration_hours', type: 'decimal', precision: 10, scale: 2, nullable: true })
   durationHours: number;
 
+  @Column({ type: 'varchar', length: 20, default: 'draft' })
+  status: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

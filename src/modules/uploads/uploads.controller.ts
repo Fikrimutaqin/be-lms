@@ -6,16 +6,19 @@ import {
   BadRequestException,
   Delete,
   Param,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { UploadsService } from './uploads.service';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @ApiTags('Uploads')
 @ApiBearerAuth()
 @Controller('uploads')
+@UseGuards(ThrottlerGuard)
 export class UploadsController {
   constructor(private readonly uploadsService: UploadsService) {}
 
