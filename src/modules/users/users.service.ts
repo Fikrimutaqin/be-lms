@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
+import { User, UserRole } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 
@@ -45,6 +45,37 @@ export class UsersService {
 
     return {
       message: 'Users retrieved successfully',
+      data: items,
+      meta: {
+        totalItems,
+        itemCount: items.length,
+        itemsPerPage: Number(limit),
+        totalPages,
+        currentPage: Number(page),
+      },
+    };
+  }
+
+  /**
+   * Mengambil semua user dengan role INSTRUCTOR.
+   * Hanya mengembalikan field non-sensitif.
+   */
+  async findInstructors(query: PaginationQueryDto) {
+    const { page = 1, limit = 10 } = query;
+    const skip = (page - 1) * limit;
+
+    const [items, totalItems] = await this.usersRepository.findAndCount({
+      where: { role: UserRole.INSTRUCTOR },
+      select: ['id', 'firstName', 'lastName', 'avatarUrl'],
+      take: limit,
+      skip: skip,
+      order: { createdAt: 'DESC' },
+    });
+
+    const totalPages = Math.ceil(totalItems / limit);
+
+    return {
+      message: 'Instructors retrieved successfully',
       data: items,
       meta: {
         totalItems,

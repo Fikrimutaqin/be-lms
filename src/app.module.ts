@@ -29,6 +29,9 @@ import { CertificatesModule } from './modules/certificates/certificates.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { ActivityLogsModule } from './modules/activity-logs/activity-logs.module';
 import { SearchModule } from './modules/search/search.module';
+import { TestimoniesModule } from './modules/testimonies/testimonies.module';
+import { CartModule } from './modules/cart/cart.module';
+import { OrdersModule } from './modules/orders/orders.module';
 
 
 @Module({
@@ -90,6 +93,9 @@ import { SearchModule } from './modules/search/search.module';
     NotificationsModule,
     ActivityLogsModule,
     SearchModule,
+    TestimoniesModule,
+    CartModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [
