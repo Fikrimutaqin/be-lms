@@ -63,13 +63,14 @@ export class CategoriesService {
   }
 
   /**
-   * Logika kompleks untuk mencari Kategori Terpopuler.
-   * Menghitung total pendaftaran (enrollment) di semua kursus dalam setiap kategori.
+   * Mengambil 10 kategori terpopuler berdasarkan jumlah pendaftaran (enrollment).
+   * Logic: Category -> Courses -> Enrollments (Count)
    */
   async topCategories() {
     const categories = await this.categoryRepository
       .createQueryBuilder('category')
-      .leftJoin('courses', 'course', 'course.category = category.slug')
+      // Kita join manual ke tabel courses dan enrollments
+      .leftJoin('courses', 'course', 'course.category_id = category.id')
       .leftJoin('enrollments', 'enrollment', 'enrollment.course_id = course.id')
       .select([
         'category.id AS id',
@@ -77,17 +78,23 @@ export class CategoriesService {
         'category.slug AS slug',
         'category.image AS image',
       ])
-      // Cast ke integer agar hasil COUNT tidak menjadi string di JSON response
-      .addSelect('CAST(COUNT(enrollment.id) AS INTEGER)', 'courseSold')
+      // Menghitung total enrollment per kategori
+      .addSelect('COUNT(enrollment.id)::INTEGER', 'courseSold')
+      // Di PostgreSQL, semua kolom di SELECT harus masuk ke GROUP BY jika ada fungsi agregat
       .groupBy('category.id')
-      .orderBy('COUNT(enrollment.id)', 'DESC') // Urutkan dari yang paling banyak terjual
-      .having('COUNT(enrollment.id) > 0') // Sembunyikan kategori yang penjualannya masih 0
+      .addGroupBy('category.name')
+      .addGroupBy('category.slug')
+      .addGroupBy('category.image')
+      // Urutkan berdasarkan courseSold secara descending
+      .orderBy('"courseSold"', 'DESC')
+      // Hanya ambil kategori yang minimal memiliki 1 enrollment
+      .having('COUNT(enrollment.id) > 0')
       .limit(10)
       .getRawMany();
 
     return {
       message: 'Top categories retrieved successfully',
-      data: categories
+      data: categories,
     };
   }
 
@@ -120,7 +127,7 @@ export class CategoriesService {
   }
 
   /**
-   * Menampilkan list kategori dan jumlah kursus dalam kategori tersebut
+   * Menampilkan list kategori dan semua kursus yang ada di dalamnya.
    */
   async showListCategoriesWithCourse(query: PaginationQueryDto) {
     const { limit = 10, page = 1 } = query;
@@ -128,7 +135,7 @@ export class CategoriesService {
 
     const categories = await this.categoryRepository
       .createQueryBuilder('category')
-      // Join menggunakan category_id
+      // Join manual ke tabel courses
       .leftJoin('courses', 'course', 'course.category_id = category.id')
       .select([
         'category.id AS id',
@@ -154,7 +161,11 @@ export class CategoriesService {
           '[]'
         )
       `, 'courses')
+      // Penting: GROUP BY semua kolom non-aggregate untuk PostgreSQL
       .groupBy('category.id')
+      .addGroupBy('category.name')
+      .addGroupBy('category.slug')
+      .addGroupBy('category.image')
       .orderBy('category.name', 'ASC')
       .limit(limit)
       .offset(skip)
