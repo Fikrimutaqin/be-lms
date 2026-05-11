@@ -11,9 +11,9 @@ export default class MainSeeder implements Seeder {
         // Seed Categories
         await dataSource.query(`
             INSERT INTO categories (name, slug, image, description) VALUES
-            ('Technology', 'technology', 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800', 'Courses related to computer science, software, and hardware'),
-            ('Business', 'business', 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800', 'Learn about entrepreneurship, management, and finance'),
-            ('Design', 'design', 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=800', 'Master UI/UX, graphic design, and creative tools'),
+            ('Technology', 'technology', 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800', 'Courses related to computer science, software, and hardware'),
+            ('Business', 'business', 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800', 'Learn about entrepreneurship, management, and finance'),
+            ('Design', 'design', 'https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&q=80&w=800', 'Master UI/UX, graphic design, and creative tools'),
             ('Development', 'development', 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=800', 'Programming languages, frameworks, and architecture'),
             ('Marketing', 'marketing', 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&q=80&w=800', 'Digital marketing, SEO, and social media strategies')
             ON CONFLICT (name) DO UPDATE SET 
@@ -63,8 +63,8 @@ export default class MainSeeder implements Seeder {
                 'UI/UX Design Essentials', 
                 'Learn to create beautiful and functional user interfaces', 
                 (SELECT id FROM categories WHERE name = 'Design' LIMIT 1), 
-                'https://images.unsplash.com/photo-1586717791821-3f44a563eb4c?auto=format&fit=crop&q=80&w=800',
-                'https://images.unsplash.com/photo-1586717791821-3f44a563eb4c?auto=format&fit=crop&q=80&w=1200',
+                'https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&q=80&w=800',
+                'https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&q=80&w=1200',
                 29.99,
                 15.0
             ),

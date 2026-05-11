@@ -132,8 +132,8 @@ export class CategoriesService {
 
     const categories = await this.categoryRepository
       .createQueryBuilder('category')
-      // Join manual ke tabel courses
       .leftJoin('courses', 'course', 'course.category_id = category.id')
+      .leftJoin('users', 'instructor', 'instructor.id = course.instructor_id')
       .select([
         'category.id AS id',
         'category.name AS name',
@@ -151,8 +151,12 @@ export class CategoriesService {
               'image', course.image,
               'banner', course.banner,
               'price', course.price,
-              'instructorId', course.instructor_id,
-              'createdAt', course.created_at
+              'createdAt', course.created_at,
+              'rating', course.rating,
+              'reviews', course.reviews,
+              'badge', course.badge,
+              'instructorName', instructor.first_name || ' ' || instructor.last_name,
+              'instructorImage', instructor.avatar_url
             )
           ) FILTER (WHERE course.id IS NOT NULL), 
           '[]'

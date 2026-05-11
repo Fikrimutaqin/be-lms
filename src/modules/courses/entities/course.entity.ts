@@ -39,6 +39,15 @@ export class Course {
   @Column({ name: 'duration_hours', type: 'decimal', precision: 10, scale: 2, nullable: true })
   durationHours: number;
 
+  @Column({ type: 'decimal', precision: 3, scale: 1, default: 0 })
+  rating: number;
+
+  @Column({ default: 0 })
+  reviews: number;
+
+  @Column({ length: 50, nullable: true })
+  badge: string;
+
   @Column({ type: 'varchar', length: 20, default: 'draft' })
   status: string;
 
