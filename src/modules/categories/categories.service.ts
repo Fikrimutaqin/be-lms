@@ -92,10 +92,7 @@ export class CategoriesService {
       .limit(10)
       .getRawMany();
 
-    return {
-      message: 'Top categories retrieved successfully',
-      data: categories,
-    };
+    return categories;
   }
 
   /**
@@ -174,7 +171,7 @@ export class CategoriesService {
     return {
       message: 'Categories with courses retrieved successfully',
       data: categories,
-      metadata: {
+      meta: {
         total: categories.length,
         limit: Number(limit),
         page: Number(page),
