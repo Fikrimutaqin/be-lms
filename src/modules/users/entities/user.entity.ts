@@ -26,6 +26,24 @@ export class User {
   @Column({ name: 'avatar_url', nullable: true })
   avatarUrl: string;
 
+  @Column({ nullable: true })
+  title: string;
+
+  @Column({ type: 'text', nullable: true })
+  bio: string;
+
+  @Column({ type: 'decimal', precision: 3, scale: 1, default: 0 })
+  rating: number;
+
+  @Column({ name: 'reviews_count', default: 0 })
+  reviewsCount: number;
+
+  @Column({ name: 'students_count', default: 0 })
+  studentsCount: number;
+
+  @Column({ name: 'courses_count', default: 0 })
+  coursesCount: number;
+
   @Column({
     type: 'varchar',
     length: 50,

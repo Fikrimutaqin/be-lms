@@ -66,7 +66,7 @@ export class UsersService {
 
     const [items, totalItems] = await this.usersRepository.findAndCount({
       where: { role: UserRole.INSTRUCTOR },
-      select: ['id', 'firstName', 'lastName', 'avatarUrl'],
+      select: ['id', 'firstName', 'lastName', 'avatarUrl', 'title', 'bio', 'rating', 'reviewsCount', 'studentsCount', 'coursesCount'],
       take: limit,
       skip: skip,
       order: { createdAt: 'DESC' },

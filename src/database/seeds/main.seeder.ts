@@ -26,11 +26,12 @@ export default class MainSeeder implements Seeder {
         
         // Seed Users
         await dataSource.query(`
-            INSERT INTO users (first_name, last_name, email, password, role) VALUES
-            ('John', 'Instructor', 'john.instructor@lms.com', '${password}', 'instructor'),
-            ('Jane', 'Student', 'jane.student@lms.com', '${password}', 'student'),
-            ('Bob', 'Student', 'bob.student@lms.com', '${password}', 'student'),
-            ('Admin', 'User', 'admin@lms.com', '${password}', 'admin')
+            INSERT INTO users (first_name, last_name, email, password, role, title, bio, rating, reviews_count, students_count, courses_count, avatar_url) VALUES
+            ('John', 'Instructor', 'john.instructor@lms.com', '${password}', 'instructor', 'Lead Developer', 'Expert in NestJS and TypeORM with over 10 years of experience.', 4.9, 1500, 12000, 5, 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=800'),
+            ('Angela', 'Yu', 'angela.yu@lms.com', '${password}', 'instructor', 'Lead Instructor & Developer', 'Developer and Lead Instructor at London App Brewery. I''ve taught millions of students globally.', 4.8, 1204561, 2450000, 7, 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=800'),
+            ('Jane', 'Student', 'jane.student@lms.com', '${password}', 'student', NULL, NULL, 0, 0, 0, 0, NULL),
+            ('Bob', 'Student', 'bob.student@lms.com', '${password}', 'student', NULL, NULL, 0, 0, 0, 0, NULL),
+            ('Admin', 'User', 'admin@lms.com', '${password}', 'admin', NULL, NULL, 0, 0, 0, 0, NULL)
             ON CONFLICT (email) DO NOTHING;
         `);
 
