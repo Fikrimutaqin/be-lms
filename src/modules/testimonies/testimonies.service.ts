@@ -11,7 +11,7 @@ export class TestimoniesService {
   constructor(
     @InjectRepository(Testimony)
     private readonly testimonyRepository: Repository<Testimony>,
-  ) {}
+  ) { }
 
   async create(createTestimonyDto: CreateTestimonyDto) {
     const testimony = this.testimonyRepository.create(createTestimonyDto);
@@ -24,10 +24,17 @@ export class TestimoniesService {
 
     const [items, totalItems] = await this.testimonyRepository.findAndCount({
       where: { status: 'approved' },
+      select: {
+        id: true,
+        name: true,
+        avatar: true,
+        content: true,
+        rating: true,
+        createdAt: true,
+      },
       order: { createdAt: 'DESC' },
       take: limit,
       skip: skip,
-      relations: ['user', 'course'],
     });
 
     return {
