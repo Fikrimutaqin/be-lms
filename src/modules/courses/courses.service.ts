@@ -1,12 +1,14 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ObjectLiteral, Repository, FindManyOptions } from 'typeorm';
 import { Course } from './entities/course.entity';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
+import { CourseQueryDto } from './dto/course-query.dto';
 import { CourseStats } from './entities/course-stats.entity';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 import { UserRole } from '../users/entities/user.entity';
+import { paginate } from '../../common/utils/pagination.util';
 
 @Injectable()
 export class CoursesService {
@@ -15,7 +17,7 @@ export class CoursesService {
     private readonly courseRepository: Repository<Course>,
     @InjectRepository(CourseStats)
     private readonly statsRepository: Repository<CourseStats>,
-  ) {}
+  ) { }
 
   /**
    * Membuat kursus baru.
@@ -33,30 +35,22 @@ export class CoursesService {
    * Mengambil daftar kursus dengan metadata pagination.
    * Menggunakan findAndCount agar kita tahu total data untuk dihitung di frontend.
    */
-  async findAll(query: PaginationQueryDto) {
-    const { page = 1, limit = 10 } = query;
-    const skip = (page - 1) * limit;
-
-    const [items, totalItems] = await this.courseRepository.findAndCount({
-      take: limit,
-      skip: skip,
-      relations: ['instructor'], // Sertakan info instruktur
-      order: { createdAt: 'DESC' }, // Kursus terbaru muncul paling atas
-    });
-
-    const totalPages = Math.ceil(totalItems / limit);
-
-    return {
-      message: 'Courses retrieved successfully',
-      data: items,
-      meta: {
-        totalItems,
-        itemCount: items.length,
-        itemsPerPage: Number(limit),
-        totalPages,
-        currentPage: Number(page),
-      },
+  async findAll(query: CourseQueryDto) {
+    const options: FindManyOptions<Course> = {
+      relations: ['instructor', 'category'],
+      order: { createdAt: 'DESC' },
     };
+
+    if (query.categoryId) {
+      options.where = { categoryId: query.categoryId };
+    }
+
+    return paginate(
+      this.courseRepository,
+      options,
+      query,
+      query.categoryId ? 'Courses for category retrieved successfully' : 'Courses retrieved successfully',
+    );
   }
 
   /**

@@ -64,6 +64,7 @@ export class CategoriesController {
   /**
    * Mengambil detail kategori berdasarkan ID.
    */
+  @Public()
   @Get(':id')
   @ApiOperation({ summary: 'Get a category by id' })
   @ApiResponse({ status: 200, description: 'Return a category.', type: Category })

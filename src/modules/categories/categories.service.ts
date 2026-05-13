@@ -5,7 +5,7 @@ import { Category } from './entities/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
-import { metadata } from 'reflect-metadata/no-conflict';
+import { paginate } from '../../common/utils/pagination.util';
 
 @Injectable()
 export class CategoriesService {
@@ -38,28 +38,14 @@ export class CategoriesService {
    * Mengambil semua kategori dengan pagination.
    */
   async findAll(query: PaginationQueryDto) {
-    const { page = 1, limit = 10 } = query;
-    const skip = (page - 1) * limit;
-
-    const [items, totalItems] = await this.categoryRepository.findAndCount({
-      take: limit,
-      skip: skip,
-      order: { name: 'ASC' }, // Urutkan alfabetis
-    });
-
-    const totalPages = Math.ceil(totalItems / limit);
-
-    return {
-      message: 'Categories retrieved successfully',
-      data: items,
-      meta: {
-        totalItems,
-        itemCount: items.length,
-        itemsPerPage: Number(limit),
-        totalPages,
-        currentPage: Number(page),
+    return paginate(
+      this.categoryRepository,
+      {
+        order: { name: 'ASC' },
       },
-    };
+      query,
+      'Categories retrieved successfully',
+    );
   }
 
   /**

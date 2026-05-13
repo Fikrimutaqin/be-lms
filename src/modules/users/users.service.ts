@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { User, UserRole } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { paginate } from '../../common/utils/pagination.util';
 
 @Injectable()
 export class UsersService {
@@ -32,28 +33,14 @@ export class UsersService {
    * Mengambil semua daftar user dengan pagination.
    */
   async findAll(query: PaginationQueryDto) {
-    const { page = 1, limit = 10 } = query;
-    const skip = (page - 1) * limit;
-
-    const [items, totalItems] = await this.usersRepository.findAndCount({
-      take: limit,
-      skip: skip,
-      order: { createdAt: 'DESC' },
-    });
-
-    const totalPages = Math.ceil(totalItems / limit);
-
-    return {
-      message: 'Users retrieved successfully',
-      data: items,
-      meta: {
-        totalItems,
-        itemCount: items.length,
-        itemsPerPage: Number(limit),
-        totalPages,
-        currentPage: Number(page),
+    return paginate(
+      this.usersRepository,
+      {
+        order: { createdAt: 'DESC' },
       },
-    };
+      query,
+      'Users retrieved successfully',
+    );
   }
 
   /**
@@ -61,30 +48,16 @@ export class UsersService {
    * Hanya mengembalikan field non-sensitif.
    */
   async findInstructors(query: PaginationQueryDto) {
-    const { page = 1, limit = 10 } = query;
-    const skip = (page - 1) * limit;
-
-    const [items, totalItems] = await this.usersRepository.findAndCount({
-      where: { role: UserRole.INSTRUCTOR },
-      select: ['id', 'firstName', 'lastName', 'avatarUrl', 'title', 'bio', 'rating', 'reviewsCount', 'studentsCount', 'coursesCount'],
-      take: limit,
-      skip: skip,
-      order: { createdAt: 'DESC' },
-    });
-
-    const totalPages = Math.ceil(totalItems / limit);
-
-    return {
-      message: 'Instructors retrieved successfully',
-      data: items,
-      meta: {
-        totalItems,
-        itemCount: items.length,
-        itemsPerPage: Number(limit),
-        totalPages,
-        currentPage: Number(page),
+    return paginate(
+      this.usersRepository,
+      {
+        where: { role: UserRole.INSTRUCTOR },
+        select: ['id', 'firstName', 'lastName', 'avatarUrl', 'title', 'bio', 'rating', 'reviewsCount', 'studentsCount', 'coursesCount'],
+        order: { createdAt: 'DESC' },
       },
-    };
+      query,
+      'Instructors retrieved successfully',
+    );
   }
 
   /**

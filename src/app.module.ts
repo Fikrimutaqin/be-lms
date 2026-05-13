@@ -59,7 +59,7 @@ import { OrdersModule } from './modules/orders/orders.module';
           password: databaseUrl ? undefined : configService.get<string>('DB_PASSWORD'),
           database: databaseUrl ? undefined : configService.get<string>('DB_DATABASE'),
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
-          synchronize: false, // Diset false demi keamanan data (gunakan migrasi)
+          synchronize: false, // Kembalikan ke false setelah migrasi selesai
           
           // Konfigurasi SSL untuk Neon atau Cloud Database lainnya
           ssl: databaseUrl || configService.get<string>('DB_SSL') === 'true' 

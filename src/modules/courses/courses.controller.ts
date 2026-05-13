@@ -4,10 +4,12 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
+import { CourseQueryDto } from './dto/course-query.dto';
 import { Course } from './entities/course.entity';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
+import { Public } from '../../common/decorators/public.decorator';
 
 @ApiTags('Courses')
 @Controller('courses')
@@ -40,18 +42,20 @@ export class CoursesController {
 
   /**
    * Mengambil semua daftar kursus dengan sistem pagination.
-   * Mendukung query parameter ?page=1&limit=10
+   * Mendukung query parameter ?page=1&limit=10 & categoryId=...
    */
+  @Public()
   @Get()
   @ApiOperation({ summary: 'Get all courses' })
   @ApiResponse({ status: 200, description: 'Return all courses.' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: CourseQueryDto) {
     return this.coursesService.findAll(query);
   }
 
   /**
    * Mencari detail satu kursus berdasarkan ID-nya.
    */
+  @Public()
   @Get(':id')
   @ApiOperation({ summary: 'Get a course by id' })
   @ApiResponse({ status: 200, description: 'Return a course.', type: Course })
@@ -70,8 +74,8 @@ export class CoursesController {
   @ApiResponse({ status: 200, description: 'The course has been successfully updated.', type: Course })
   @ApiResponse({ status: 404, description: 'Course not found.' })
   update(
-    @Param('id', ParseUUIDPipe) id: string, 
-    @Body() updateCourseDto: UpdateCourseDto, 
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateCourseDto: UpdateCourseDto,
     @Req() req: Request
   ) {
     return this.coursesService.update(id, updateCourseDto, req.user);
